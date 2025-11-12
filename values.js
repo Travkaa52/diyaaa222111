@@ -2,7 +2,7 @@
 
 // Основные данные 
 var fio               = "Касьян Михайло Валерійович";
-var fio_en            = "";
+var fio_en            = "Kasyan Mikhail Valeriyovych";
 var birth             = "11.10.2007"; //дата рождения
 var date_give         = "03.11.2025"; //Дата видачи
 var date_out          = "03.11.2035"; // действителен до
@@ -67,6 +67,7 @@ var photo_zagran   = "image_2025-10-22_14-44-50.png"; //загран
 
 var signPng           = "sign.png"; //подпись
 // Можно добавить еще, если надо
+
 
 
 
