@@ -517,12 +517,12 @@
         }
 
         .slider {
-            width: 86%;
+            width: 88%;
             transform-style: preserve-3d;
             transition: transform 0.4s;
             position: relative;
             min-width: 0;
-            height: 87%;
+            height: 89%;
 			margin-top: 25px
         }
 
@@ -4080,9 +4080,9 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
   isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
   if (navigator.userAgent.match(/Android/)) {
   }
-  if(isInWebAppiOS == false && isInWebAppChrome == true){
+  if(isInWebAppiOS == false && isInWebAppChrome == false){
 	isWorking = false;
-  	$('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br></div>');
+  	$('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br>ОБОВЯЗКОВА ПІДПИСКА НА ТЕЛЕГРАМ @funsdiya</div>');
   	$('body').addClass('nononopage');
   } 
 
@@ -4627,6 +4627,7 @@ $('.diyalogo').fadeIn(500);
         // Пройдитесь по всем элементам и запустите для каждого обратный отсчёт
     </script>
 </html>
+
 
 
 
