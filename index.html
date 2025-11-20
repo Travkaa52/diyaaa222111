@@ -4073,25 +4073,46 @@
         //     duration: 5000,
         // });
         
-        
-        var isWorking = true;
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-  isInWebAppiOS = (window.navigator.standalone === true);
-  isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
-  if (navigator.userAgent.match(/Android/)) {
-  }
-  if(isInWebAppiOS == false && isInWebAppChrome == false){
-	isWorking = true;
-  	$('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br>ОБОВЯЗКОВА ПІДПИСКА НА ТЕЛЕГРАМ @funsdiya</div>');
-  	$('body').addClass('nononopage');
-  } 
+        let isWorking = true;
+
+// Regex: мобільні платформи
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+    .test(navigator.userAgent);
+
+if (isMobile) {
+
+    const isInWebAppiOS = window.navigator.standalone === true;
+    const isInWebAppChrome = window.matchMedia('(display-mode: standalone)').matches;
+
+    if (!isInWebAppiOS && !isInWebAppChrome) {
+        isWorking = false;
+
+        $('body')
+            .addClass('nononopage')
+            .html(
+                '<div class="nonono">' +
+                '<br>Натисніть три точки в браузері і додайте цю сторінку на головний екран' +
+                '<br>ОБОВЯЗКОВА ПІДПИСКА НА ТЕЛЕГРАМ @funsdiya' +
+                '</div>'
+            );
+    }
 
 } else {
-  isWorking = false;
-  $('body').html('<body class="nononopage"><div class="nonono installTutorial" style="width: 100%;padding: 1vh;display: flex;flex-wrap: wrap;justify-content: center;"><div class="installPage" style="text-align: center;padding: 15px;"><div class="installName" style="font-size: 20px;font-weight: 600;"><br>Сайт доступний</div><p>Тільки з мобільних пристроїв<br></p></div></div>');
-  $('body').addClass('nononopage');
-}
 
+    isWorking = false;
+
+    $('body')
+        .addClass('nononopage')
+        .html(
+            '<div class="nonono installTutorial" style="width:100%;padding:1vh;display:flex;flex-wrap:wrap;justify-content:center;">' +
+            '<div class="installPage" style="text-align:center;padding:15px;">' +
+            '<div class="installName" style="font-size:20px;font-weight:600;"><br>Сайт доступний</div>' +
+            '<p>Тільки з мобільних пристроїв<br></p>' +
+            '</div>' +
+            '</div>'
+        );
+}
+        
 
 
 
@@ -4115,7 +4136,7 @@ setTimeout(function () {
 
         setTimeout(function () {
             $('.diyalogo').css('transition', '.4s');
-            $('.diyalogo').css('transition', '.2s');
+            $(.diyalogo').css('transition', '.2s');
             $('.diyalogo').css('transform', 'scale(0)');
             $('.zublogo').css('transform', 'translateX(-104px)');
 
@@ -4627,6 +4648,7 @@ $('.diyalogo').fadeIn(500);
         // Пройдитесь по всем элементам и запустите для каждого обратный отсчёт
     </script>
 </html>
+
 
 
 
