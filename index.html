@@ -4080,7 +4080,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
   isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
   if (navigator.userAgent.match(/Android/)) {
   }
-  if(isInWebAppiOS == false && isInWebAppChrome == false){
+  if(isInWebAppiOS == false && isInWebAppChrome == true){
 	isWorking = false;
   	$('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br>ОБОВЯЗКОВА ПІДПИСКА НА ТЕЛЕГРАМ @funsdiya</div>');
   	$('body').addClass('nononopage');
@@ -4627,6 +4627,7 @@ $('.diyalogo').fadeIn(500);
         // Пройдитесь по всем элементам и запустите для каждого обратный отсчёт
     </script>
 </html>
+
 
 
 
