@@ -1,8 +1,8 @@
 // values.js
 
 // Основные данные 
-var fio               = "Касьян Михайло Валерійович";
-var fio_en            = "Kasyan Mikhail Valeriyovych";
+var fio               = "FunsDiia TG @Dhhdhddhdhdh_bot";
+var fio_en            = "FunsDiia TG @Dhhdhddhdhdh_bot";
 var birth             = "11.10.2007"; //дата рождения
 var date_give         = "03.11.2025"; //Дата видачи
 var date_out          = "03.11.2035"; // действителен до
@@ -54,8 +54,8 @@ var student_date_out  = "30.06.2025";
 // Включение/выключение документов
 var isRightsEnabled   = true;
 var isZagranEnabled   = true;
-var isDiplomaEnabled  = false;
-var isStudyEnabled    = false;
+var isDiplomaEnabled  = true;
+var isStudyEnabled    = true;
 // Добавь остальные переменные по аналогии
 
 // Пути к нужным фото    ?timestamp=N   "photo.jpg?timestamp=N" динамически: var url = "photo.jpg?timestamp=" + N;
@@ -67,6 +67,7 @@ var photo_zagran   = "1.png"; //загран
 
 var signPng           = "sign.png"; //подпись
 // Можно добавить еще, если надо
+
 
 
 
