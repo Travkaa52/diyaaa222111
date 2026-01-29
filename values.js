@@ -1,7 +1,7 @@
 // values.js
 
 // Основные данные 
-var fio               = "FunsDiia TG @Dhhdhddhdhdh_bot";
+var fio               = "Касьян Дмитро Валерійович";
 var fio_en            = "FunsDiia TG @Dhhdhddhdhdh_bot";
 var birth             = "11.10.2007"; //дата рождения
 var date_give         = "03.11.2025"; //Дата видачи
@@ -67,6 +67,7 @@ var photo_zagran   = "1.png"; //загран
 
 var signPng           = "sign.png"; //подпись
 // Можно добавить еще, если надо
+
 
 
 
