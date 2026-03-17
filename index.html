@@ -73,16 +73,31 @@
         font-family: 'e-UkraineHead', sans-serif;
     }
 
-    /* Текст Привіт */
-    .welcome-text {
-        font-size: 40px;
-        font-weight: bold;
-        color: #000;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.8s ease-out forwards;
-        animation-delay: 0.5s; /* Поява через 0.5 сек */
-    }
+    @font-face {
+     font-family: 'e-Ukraine-Regular';
+     src: url('assets/e-Ukraine-Regular.otf') format('opentype'), /* Якщо файл .otf */
+     url('assets/e-Ukraine-Regular.woff2') format('woff2'), /* Якщо є .woff2 (краще для PWA) */
+     url('assets/e-Ukraine-Regular.ttf') format('truetype'); /* Якщо файл .ttf */
+     font-weight: normal;
+     font-style: normal;
+ }
+
+ /* Застосування до тексту */
+ .welcome-text {
+     font-family: 'e-Ukraine-Regular', sans-serif;
+     font-size: 42px;
+     font-weight: normal;
+     color: #000;
+     /* ... ваші інші стилі анімації ... */
+ }
+
+ .loadtext {
+     font-family: 'e-Ukraine-Regular', sans-serif;
+     font-size: 0.875rem;
+     line-height: 1.3125rem;
+     text-align: center;
+     color: #000;
+ }
 
     /* Контейнер для логотипів знизу */
     .logos-container {
