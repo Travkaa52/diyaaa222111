@@ -56,6 +56,7 @@ var isRightsEnabled   = true;
 var isZagranEnabled   = true;
 var isDiplomaEnabled  = true;
 var isStudyEnabled    = true;
+var isRojdenie        = true;
 // Добавь остальные переменные по аналогии
 
 // Пути к нужным фото    ?timestamp=N   "photo.jpg?timestamp=N" динамически: var url = "photo.jpg?timestamp=" + N;
