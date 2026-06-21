@@ -556,7 +556,7 @@
     }
 
     .front {
-        position: fixed;
+        position: absolute;
         background-color: rgba(255, 255, 255, 0.4);
     }
 
@@ -698,27 +698,88 @@
             color: #a1a1a1;
         }
 
+    
+    /* Pure CSS marquee fallback */
+    @keyframes marqueeLeft {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .marquee {
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .marquee-track {
+        display: inline-block;
+        animation: marqueeLeft linear infinite;
+        white-space: nowrap;
+    }
+
     .qrshBlock {
         height: 252px;
     }
+
+
+    .overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        transition: opacity 0.3s;
+        opacity: 0;
+        display: none;
+    }
+    .overlay.visible { display: block; opacity: 0.7; }
+    .hidden { display: none !important; }
 
     .qrcode {
         background-image: url(assets/q.png);
         background-size: contain;
         background-position: center;
-        width: 320px;
+        width: 300px;
         margin-top: 10px;
-        height: 320px;
+        height: 300px;
     }
 
     .shcode {
         background-image: url(assets/q.png);
         background-size: contain;
         background-position: center;
-        width: 252px;
+        width: 245px;
         margin-top: 20px;
-        height: 76px;
+        height: 70px;
     }
+
+    /* Touch feedback */
+    .main_block > div:active,
+    .close_block:active,
+    .popular_poslugu_block > div:active,
+    .services > div:active,
+    .columnMenu > div > div:active {
+        opacity: 0.7;
+        transition: opacity 0.1s;
+    }
+    
+    /* Smooth card flip */
+    .slider {
+        transition: transform 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+    
+    /* Better image fit */
+    .dataBlock > img {
+        object-fit: cover;
+    }
+    
+    /* Admin panel scrollable */
+    #admin-panel {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Footer active state */
+    .footer > div:active img {
+        transform: scale(0.9);
+        transition: transform 0.1s;
+    }
+
 </style>
 
 
@@ -756,7 +817,7 @@
                     <span>Питання та відповіді</span>
                 </div>
                 <div class="qrChangeInfo">
-                    <div data-index="pasport" id="openQr">
+                    <div data-index="pasport" class="openQrBtn">
                         <div style="background: black">
                             <img src="assets/qr-code.png"
                                  style="
@@ -766,7 +827,7 @@
                         </div>
                         <span>QR-код</span>
                     </div>
-                    <div data-index="pasport" id="openSh">
+                    <div data-index="pasport" class="openShBtn">
                         <div style="background: black">
                             <img src="assets/free-icon-barcode-7797192.png"
                                  style="
@@ -809,7 +870,7 @@
                     <span>Питання та відповіді</span>
                 </div>
                 <div class="qrChangeInfo">
-                    <div data-index="zagran" id="openQr">
+                    <div data-index="zagran" class="openQrBtn">
                         <div style="background: black">
                             <img src="assets/qr-code.png"
                                  style="
@@ -819,7 +880,7 @@
                         </div>
                         <span>QR-код</span>
                     </div>
-                    <div data-index="zagran" id="openSh">
+                    <div data-index="zagran" class="openShBtn">
                         <div style="background: black">
                             <img src="assets/free-icon-barcode-7797192.png"
                                  style="
@@ -856,7 +917,7 @@
                     <span>Питання та відповіді</span>
                 </div>
                 <div class="qrChangeInfo">
-                    <div data-index="study" id="openQr">
+                    <div data-index="study" class="openQrBtn">
                         <div style="background: black">
                             <img src="assets/qr-code.png"
                                  style="
@@ -866,7 +927,7 @@
                         </div>
                         <span>QR-код</span>
                     </div>
-                    <div data-index="study" id="openSh">
+                    <div data-index="study" class="openShBtn">
                         <div style="background: black">
                             <img src="assets/free-icon-barcode-7797192.png"
                                  style="
@@ -899,7 +960,7 @@
                     <span>Питання та відповіді</span>
                 </div>
                 <div class="qrChangeInfo">
-                    <div data-index="podatki" id="openQr">
+                    <div data-index="podatki" class="openQrBtn">
                         <div style="background: black">
                             <img src="assets/qr-code.png"
                                  style="
@@ -909,7 +970,7 @@
                         </div>
                         <span>QR-код</span>
                     </div>
-                    <div data-index="podatki" id="openSh">
+                    <div data-index="podatki" class="openShBtn">
                         <div style="background: black">
                             <img src="assets/free-icon-barcode-7797192.png"
                                  style="
@@ -933,7 +994,7 @@
                     <img src="assets/document.png" alt="" />
                     <span>Повна інформація</span>
                 </div>
-                <div class="border" id="openQr" data-index="eDoc">
+                <div class="border" class="openQrBtn" data-index="eDoc">
                     <img src="assets/qr-code.png" alt="" />
                     <span>Код для перевірки</span>
                 </div>
@@ -980,6 +1041,34 @@
         </div>
     </div>
 
+
+
+    <div class="document_block_div zbroya_block_div">
+        <div>
+            <div class="main_block">
+                <div class="border">
+                    <img src="assets/document.png" alt="" />
+                    <span>Повна інформація</span>
+                </div>
+                <div class="border">
+                    <img src="assets/star.png" alt="" />
+                    <span>Оцінити документ</span>
+                </div>
+                <div class="border">
+                    <img src="assets/exchange.png" alt="" />
+                    <span>Змінити порядок документів</span>
+                </div>
+                <div>
+                    <img src="assets/question.png" alt="" />
+                    <span>Питання та відповіді</span>
+                </div>
+            </div>
+            <div class="close_block" data-index="zbroya">
+                Закрити
+            </div>
+        </div>
+    </div>
+
     <style>
         .video-background {
             position: absolute;
@@ -1010,6 +1099,7 @@
         }
     </style>
 
+    <div id="overlay" class="overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,.7);z-index:1000;transition:opacity .3s;opacity:0;pointer-events:none;display:none"></div>
     <div class="loadpage">
         <div class="welcome-text">Привіт 👋</div>
         <div class="logos-container">
@@ -1062,7 +1152,7 @@
     <div class="main">
         <div class="block block1 blockStart">
             <h1 class="textVizit">
-                Привіт, <span id="textName"></span>👋
+                Привіт, <span data-field="textName"></span>👋
             </h1>
             <div class="pre" style="overflow-x: hidden;">
                 <div class="nezlamnist">
@@ -1082,19 +1172,19 @@
                     </div>
                 </div>
                 <div class="threeButtons">
-                    <div id="buttonLoad">
+                    <div class="btn-load">
                         <div>
                             <img src="assets/qr.svg" alt="" />
                         </div>
                         <span>Сканувати QR-код</span>
                     </div>
-                    <div id="buttonLoad">
+                    <div class="btn-load">
                         <div>
                             <img src="assets/gerb.png" alt="" />
                         </div>
                         <span>Військові облігації</span>
                     </div>
-                    <div id="buttonLoad">
+                    <div class="btn-load">
                         <img style="
                                     width: 54px;
                                     height: 54px;
@@ -1498,7 +1588,7 @@
                     <h1>Студентський квиток</h1>
 
                     <div class="numberNN" style="gap: 10px">
-                        <h3 id="nomerStudy"></h3>
+                        <h3 data-field="nomerStudy"></h3>
                         <img class="copyPng"
                              src="assets/copy.png"
                              alt="" />
@@ -1520,12 +1610,12 @@
                                 padding: 7px 0;
                             ">
                         • Документ оновлено о
-                        <span id="getCurrentDateTime"></span>
+                        <span data-field="getCurrentDateTime"></span>
                     </div>
                     <div class="fullPasportBlock">
-                        <h2 id="name">Тут твоё имя</h2>
+                        <h2 data-field="name">Тут твоё имя</h2>
                         <div class="dataBlock" style="margin-top: 15px">
-                            <img id="imgStudent"
+                            <img data-field="imgStudent"
                                  src=""
                                  style="border: 1px solid #ddd"
                                  alt="" />
@@ -1546,7 +1636,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="vidanoStudy"></span>
+                                          data-field="vidanoStudy"></span>
                                 </div>
                                 <div style="width: 100%; color: #a1a1a1">
                                     <span class="dataInfoFirst"
@@ -1560,7 +1650,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="diusnuyDoStudy"></span>
+                                          data-field="diusnuyDoStudy"></span>
                                 </div>
                                 <div style="width: 100%; color: #a1a1a1">
                                     <span class="dataInfoFirst"
@@ -1574,7 +1664,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="formaStudy"></span>
+                                          data-field="formaStudy"></span>
                                 </div>
                             </div>
                         </div>
@@ -1582,11 +1672,11 @@
                     <div class="dataBlock2">
                         <div>
                             <div>
-                                <h3 id="university">
+                                <h3 data-field="university">
                                     Державний університет "Житомирська
                                     політехніка"
                                 </h3>
-                                <h3 id="fakultat" style="margin-top: 10px">
+                                <h3 data-field="fakultat" style="margin-top: 10px">
                                     Факультет педагогічних технологій та
                                     освіти впродовж життя
                                 </h3>
@@ -1636,13 +1726,158 @@
                     </div>
                 </div>
             </div>
+            </style>
+            <div id="zbroya-modal" class="modal">
+                <div class="study-modal-content modal-content">
+                    <div class="handle"></div>
+                    <h1>Дозвіл на зберігання і носіння зброї фізичною особою</h1>
+
+                    <div class="numberNN" style="gap: 10px">
+                        <h3 data-field="nomerStudy"></h3>
+                        <img class="copyPng"
+                             src="assets/copy.png"
+                             alt="" />
+                    </div>
+
+                    <!-- Вставьте сюда ваше содержимое -->
+                    <div class="line1 marquee"
+                         style="
+                    background: linear-gradient(
+                        90deg,
+                        #b6eb9f,
+                        #9ccfcf
+                    );
+                    margin: 10px -20px 10px -20px;
+                    position: relative;
+                    overflow: hidden;
+                    font-weight: 300;
+                    font-size: 13px;
+                    padding: 7px 0;
+                ">
+                        • Документ оновлено о
+                        <span data-field="getCurrentDateTime"></span>
+                    </div>
+                    <div class="fullPasportBlock">
+                        <h2 data-field="name">Тут твоё имя</h2>
+                        <div class="dataBlock" style="margin-top: 15px">
+                            <img data-field="imgStudent"
+                                 src=""
+                                 style="border: 1px solid #ddd"
+                                 alt="" />
+                            <div class="dataInfo">
+                                <div style="
+                                margin-top: 15px;
+                                width: 100%;
+                                color: #a1a1a1;
+                            ">
+                                    <span class="dataInfoFirst"
+                                          style="
+                                    font-size: 13px;
+                                    color: black;
+                                ">
+                                        Виданий:
+                                    </span>
+                                    <span style="
+                                    font-size: 13px;
+                                    color: black;
+                                "
+                                          data-field="vidanoStudy"></span>
+                                </div>
+                                <div style="width: 100%; color: #a1a1a1">
+                                    <span class="dataInfoFirst"
+                                          style="
+                                    font-size: 13px;
+                                    color: black;
+                                ">
+                                        Дійсний:
+                                    </span>
+                                    <span style="
+                                    font-size: 13px;
+                                    color: black;
+                                "
+                                          data-field="diusnuyDoStudy"></span>
+                                </div>
+                                <div style="width: 100%; color: #a1a1a1">
+                                    <span class="dataInfoFirst"
+                                          style="
+                                    font-size: 13px;
+                                    color: black;
+                                ">
+                                        Форма навчання:
+                                    </span>
+                                    <span style="
+                                    font-size: 13px;
+                                    color: black;
+                                "
+                                          data-field="formaStudy"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dataBlock2">
+                        <div>
+                            <div>
+                                <h3 data-field="university">
+                                    Державний університет "Житомирська
+                                    політехніка"
+                                </h3>
+                                <h3 data-field="fakultat" style="margin-top: 10px">
+                                    Факультет педагогічних технологій та
+                                    освіти впродовж життя
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content back" style="margin-top: 15px; padding-right: 0; padding-left: 0; transform: rotateY(0deg); height: 460px;">
+                        <div class="qrcodeBlock">
+                            <span>
+                                Код діятиме ще
+                                <span data-time="2:59">2:59</span>
+                                хв
+                            </span>
+                            <div class="qrshBlock">
+                                <div class="qrcode changeCode"></div>
+                                <div class="shText"
+                                     style="display: none">
+                                    <span>1977</span>
+                                    <span>3411</span>
+                                    <span>48475</span>
+                                </div>
+                            </div>
+
+                            <div class="qrChange">
+                                <div data-index="1">
+                                    <div style="background: black">
+                                        <img src="assets/qr-code.png"
+                                             style="
+                                                filter: brightness(
+                                                        0
+                                                    )
+                                                    invert(1);
+                                            "
+                                             alt="" />
+                                    </div>
+                                    <span>QR-код</span>
+                                </div>
+                                <div data-index="2">
+                                    <div>
+                                        <img src="assets/free-icon-barcode-7797192.png"
+                                             alt="" />
+                                    </div>
+                                    <span>Штрихкод</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="prava-modal" class="modal">
                 <div class="prava-modal-content modal-content">
                     <div class="handle"></div>
                     <h1>Посвідчення водія</h1>
 
                     <div class="numberNN" style="gap: 10px">
-                        <h3 id="pravaNnumber">KBE968639</h3>
+                        <h3 data-field="pravaNnumber">KBE968639</h3>
                         <img class="copyPng"
                              src="assets/copy.png"
                              alt="" />
@@ -1670,10 +1905,10 @@
                         розвеселимо!
                     </div>
                     <div class="fullPasportBlock">
-                        <h2 id="name">Тут твоё имя</h2>
-                        <h3 id="nameEn">This your name</h3>
+                        <h2 data-field="name">Тут твоё имя</h2>
+                        <h3 data-field="nameEn">This your name</h3>
                         <div class="dataBlock">
-                            <img id="imgRights"
+                            <img data-field="imgRights"
                                  src=""
                                  style="border: 1px solid #ddd"
                                  alt="" />
@@ -1689,7 +1924,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="birthDate">12.07.1999</span>
+                                          data-field="birthDate">12.07.1999</span>
                                 </div>
                             </div>
                         </div>
@@ -1701,8 +1936,8 @@
                                 <span>Sex</span>
                             </div>
                             <div>
-                                <h3 id="sex">Ч</h3>
-                                <span id="sexEn">M</span>
+                                <h3 data-field="sex">Ч</h3>
+                                <span data-field="sexEn">M</span>
                             </div>
                         </div>
                         <div>
@@ -1724,7 +1959,7 @@
                                 <span>Data of issue</span>
                             </div>
                             <div>
-                                <h3 id="dateGivePrava">12.02.2020</h3>
+                                <h3 data-field="dateGivePrava">12.02.2020</h3>
                             </div>
                         </div>
                         <div>
@@ -1733,7 +1968,7 @@
                                 <span>Data of expiry</span>
                             </div>
                             <div>
-                                <h3 id="srokPrav">12.02.2028</h3>
+                                <h3 data-field="srokPrav">12.02.2028</h3>
                             </div>
                         </div>
                         <div>
@@ -1742,7 +1977,7 @@
                                 <span>Authority</span>
                             </div>
                             <div>
-                                <h3 id="pravaOrgan">ТСЦ 8631</h3>
+                                <h3 data-field="pravaOrgan">ТСЦ 8631</h3>
                             </div>
                         </div>
                     </div>
@@ -1756,7 +1991,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="rnokpp"></h3>
+                                <h3 data-field="rnokpp"></h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -1772,11 +2007,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -1791,7 +2026,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="uznr">50030135-073442</h3>
+                                <h3 data-field="uznr">50030135-073442</h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -1804,7 +2039,7 @@
                             </div>
                             <div>
                                 <h3>
-                                    М. <span id="placeBirth"></span> УКРАЇНА
+                                    М. <span data-field="placeBirth"></span> УКРАЇНА
                                 </h3>
                             </div>
                         </div>
@@ -1814,7 +2049,7 @@
                                 <span>Legal adress</span>
                             </div>
                             <div>
-                                <h3 id="legalAdress">Не вказано</h3>
+                                <h3 data-field="legalAdress">Не вказано</h3>
                             </div>
                         </div>
                         <div>
@@ -1823,7 +2058,7 @@
                                 <span>Registered on</span>
                             </div>
                             <div>
-                                <h3 id="registeredOn">Не вказано</h3>
+                                <h3 data-field="registeredOn">Не вказано</h3>
                             </div>
                         </div>
                     </div>
@@ -1897,10 +2132,10 @@
                         розвеселимо!
                     </div>
                     <div class="fullPasportBlock">
-                        <h2 id="name">Тут твоё имя</h2>
-                        <h3 id="nameEn">This your name</h3>
+                        <h2 data-field="name">Тут твоё имя</h2>
+                        <h3 data-field="nameEn">This your name</h3>
                         <div class="dataBlock">
-                            <img id="imgPassport"
+                            <img data-field="imgPassport"
                                  src=""
                                  style="border: 1px solid #ddd"
                                  alt="" />
@@ -1916,7 +2151,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="birthDate">12.07.1999</span>
+                                          data-field="birthDate">12.07.1999</span>
                                 </div>
                             </div>
                         </div>
@@ -1928,8 +2163,8 @@
                                 <span>Sex</span>
                             </div>
                             <div>
-                                <h3 id="sex">Ч</h3>
-                                <span id="sexEn">M</span>
+                                <h3 data-field="sex">Ч</h3>
+                                <span data-field="sexEn">M</span>
                             </div>
                         </div>
                         <div>
@@ -1940,7 +2175,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="rnokpp"></h3>
+                                <h3 data-field="rnokpp"></h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -1950,13 +2185,13 @@
                             <div>
                                 <h3>Документ що посвідчує особу:</h3>
                                 <h3>
-                                    Паспорт громадянина України <span id="nomerPasport">008759371</span>
+                                    Паспорт громадянина України <span data-field="nomerPasport">008759371</span>
                                 </h3>
                             </div>
                             <div style="opacity: 0; width: 20%; height: 0">
                                 <h3>Документ що посвідчує особу:</h3>
                                 <h3>
-                                    Паспорт громадянина України <span id="nomerPasport">008759371</span>
+                                    Паспорт громадянина України <span data-field="nomerPasport">008759371</span>
                                 </h3>
                             </div>
                         </div>
@@ -1968,7 +2203,7 @@
                                 <h3 style="margin-bottom: 5px">
                                     Місце проживання зазначене в банку:
                                 </h3>
-                                <h3 id="adress"></h3>
+                                <h3 data-field="adress"></h3>
                             </div>
                         </div>
                     </div>
@@ -1980,7 +2215,7 @@
                     <h1>Паспорт громадянина України</h1>
 
                     <div class="numberNN" style="gap: 10px">
-                        <h3 id="nomerPasport">008759371</h3>
+                        <h3 data-field="nomerPasport">008759371</h3>
                         <img class="copyPng"
                              src="assets/copy.png"
                              alt="" />
@@ -2002,13 +2237,13 @@
                                 padding: 7px 0;
                             ">
                         • Документ оновлено о
-                        <span id="getCurrentDateTime"></span>
+                        <span data-field="getCurrentDateTime"></span>
                     </div>
                     <div class="fullPasportBlock">
-                        <h2 id="name">Тут твоё имя</h2>
-                        <h3 id="nameEn">This your name</h3>
+                        <h2 data-field="name">Тут твоё имя</h2>
+                        <h3 data-field="nameEn">This your name</h3>
                         <div class="dataBlock">
-                            <img id="imgPassport"
+                            <img data-field="imgPassport"
                                  src=""
                                  style="border: 1px solid #ddd"
                                  alt="" />
@@ -2024,7 +2259,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="birthDate">12.07.1999</span>
+                                          data-field="birthDate">12.07.1999</span>
                                 </div>
                                 <img src="sig.png?timestamp=5699246941" alt="" />
                             </div>
@@ -2037,8 +2272,8 @@
                                 <span>Sex</span>
                             </div>
                             <div>
-                                <h3 id="sex">Ч</h3>
-                                <span id="sexEn">M</span>
+                                <h3 data-field="sex">Ч</h3>
+                                <span data-field="sexEn">M</span>
                             </div>
                         </div>
                         <div>
@@ -2060,7 +2295,7 @@
                                 <span>Data of issue</span>
                             </div>
                             <div>
-                                <h3 id="dateGive">12.02.2020</h3>
+                                <h3 data-field="dateGive">12.02.2020</h3>
                             </div>
                         </div>
                         <div>
@@ -2069,7 +2304,7 @@
                                 <span>Data of expiry</span>
                             </div>
                             <div>
-                                <h3 id="dateOut">12.02.2028</h3>
+                                <h3 data-field="dateOut">12.02.2028</h3>
                             </div>
                         </div>
                         <div>
@@ -2078,7 +2313,7 @@
                                 <span>Authority</span>
                             </div>
                             <div>
-                                <h3 id="organ">1340</h3>
+                                <h3 data-field="organ">1340</h3>
                             </div>
                         </div>
                     </div>
@@ -2092,7 +2327,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="rnokpp"></h3>
+                                <h3 data-field="rnokpp"></h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -2108,11 +2343,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -2127,7 +2362,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="uznr">50030135-073442</h3>
+                                <h3 data-field="uznr">50030135-073442</h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -2140,7 +2375,7 @@
                             </div>
                             <div>
                                 <h3>
-                                    М. <span id="placeBirth"></span> УКРАЇНА
+                                    М. <span data-field="placeBirth"></span> УКРАЇНА
                                 </h3>
                             </div>
                         </div>
@@ -2150,7 +2385,7 @@
                                 <span>Legal adress</span>
                             </div>
                             <div>
-                                <h3 id="legalAdress">Не вказано</h3>
+                                <h3 data-field="legalAdress">Не вказано</h3>
                             </div>
                         </div>
                         <div>
@@ -2159,7 +2394,7 @@
                                 <span>Registered on</span>
                             </div>
                             <div>
-                                <h3 id="registeredOn">Не вказано</h3>
+                                <h3 data-field="registeredOn">Не вказано</h3>
                             </div>
                         </div>
                     </div>
@@ -2212,7 +2447,7 @@
                     <h1>International Passport</h1>
 
                     <div class="numberNN" style="gap: 10px">
-                        <h3 id="zagran_number"></h3>
+                        <h3 data-field="zagran_number"></h3>
                         <img class="copyPng"
                              src="assets/copy.png"
                              alt="" />
@@ -2234,13 +2469,13 @@
                                 padding: 7px 0;
                             ">
                         • Document updated on
-                        <span id="getCurrentDateTime"></span>
+                        <span data-field="getCurrentDateTime"></span>
                     </div>
                     <div class="fullPasportBlock">
-                        <h2 id="name">Тут твоё имя</h2>
-                        <h3 id="nameEn">This your name</h3>
+                        <h2 data-field="name">Тут твоё имя</h2>
+                        <h3 data-field="nameEn">This your name</h3>
                         <div class="dataBlock">
-                            <img id="imgZagran"
+                            <img data-field="imgZagran"
                                  src=""
                                  style="border: 1px solid #ddd"
                                  alt="" />
@@ -2256,7 +2491,7 @@
                                                 font-size: 13px;
                                                 color: black;
                                             "
-                                          id="birthDate">12.07.1999</span>
+                                          data-field="birthDate">12.07.1999</span>
                                 </div>
                                 <img src="sig.png?timestamp=5699246941" alt="" />
                             </div>
@@ -2269,8 +2504,8 @@
                                 <span>Sex</span>
                             </div>
                             <div>
-                                <h3 id="sex">Ч</h3>
-                                <span id="sexEn">M</span>
+                                <h3 data-field="sex">Ч</h3>
+                                <span data-field="sexEn">M</span>
                             </div>
                         </div>
                         <div>
@@ -2292,7 +2527,7 @@
                                 <span>Data of issue</span>
                             </div>
                             <div>
-                                <h3 id="dateGiveZ">21.12.2022</h3>
+                                <h3 data-field="dateGiveZ">21.12.2022</h3>
                             </div>
                         </div>
                         <div>
@@ -2301,7 +2536,7 @@
                                 <span>Data of expiry</span>
                             </div>
                             <div>
-                                <h3 id="dateOutZ">21.12.2032</h3>
+                                <h3 data-field="dateOutZ">21.12.2032</h3>
                             </div>
                         </div>
                         <div>
@@ -2310,7 +2545,7 @@
                                 <span>Authority</span>
                             </div>
                             <div>
-                                <h3 id="organ">1340</h3>
+                                <h3 data-field="organ">1340</h3>
                             </div>
                         </div>
                     </div>
@@ -2324,7 +2559,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="rnokpp"></h3>
+                                <h3 data-field="rnokpp"></h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -2340,11 +2575,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span id="dataNow"></span>
+                                    <span data-field="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -2359,7 +2594,7 @@
                                         flex-direction: row;
                                         justify-content: space-between;
                                     ">
-                                <h3 id="uznr">50030135-073442</h3>
+                                <h3 data-field="uznr">50030135-073442</h3>
                                 <img class="copyPng"
                                      src="assets/copy.png"
                                      alt="" />
@@ -2372,7 +2607,7 @@
                             </div>
                             <div>
                                 <h3>
-                                    М. <span id="placeBirth"></span> УКРАЇНА
+                                    М. <span data-field="placeBirth"></span> УКРАЇНА
                                 </h3>
                             </div>
                         </div>
@@ -2382,7 +2617,7 @@
                                 <span>Legal adress</span>
                             </div>
                             <div>
-                                <h3 id="legalAdress">Не вказано</h3>
+                                <h3 data-field="legalAdress">Не вказано</h3>
                             </div>
                         </div>
                         <div>
@@ -2391,7 +2626,7 @@
                                 <span>Registered on</span>
                             </div>
                             <div>
-                                <h3 id="registeredOn">Не вказано</h3>
+                                <h3 data-field="registeredOn">Не вказано</h3>
                             </div>
                         </div>
                     </div>
@@ -2439,127 +2674,127 @@
                 </div>
             </div>
             <script>
-    // 1. ЛОГІКА ВІДЕО ТА ЗАВАНТАЖЕННЯ
-    const video = document.getElementById('myVideo');
-    const source = document.getElementById('videoSource');
-    const bgVideo = "assets/background_gradient.mp4";
-    const loadPage = document.querySelector('.loadpage');
+                // 1. ЛОГІКА ВІДЕО ТА ЗАВАНТАЖЕННЯ
+                const video = document.getElementById('myVideo');
+                const source = document.getElementById('videoSource');
+                const bgVideo = "assets/background_gradient.mp4";
+                const loadPage = document.querySelector('.loadpage');
 
-    window.addEventListener('load', () => {
-        video.play().catch(() => {
-            // Для PWA: якщо автозапуск заблоковано
-            document.body.addEventListener('click', () => {
-                video.play();
-            }, { once: true });
-        });
-    });
+                window.addEventListener('load', () => {
+                    video.play().catch(() => {
+                        // Для PWA: якщо автозапуск заблоковано
+                        document.body.addEventListener('click', () => {
+                            video.play();
+                        }, { once: true });
+                    });
+                });
 
-    video.onended = function () {
-        if (!video.loop) {
-            source.src = bgVideo;
-            video.load();
-            video.loop = true;
-            video.play();
+                video.onended = function () {
+                    if (!video.loop) {
+                        source.src = bgVideo;
+                        video.load();
+                        video.loop = true;
+                        video.play();
 
-            if (loadPage) {
-                loadPage.style.transition = "opacity 1s ease";
-                loadPage.style.opacity = '0';
-                setTimeout(() => {
-                    loadPage.style.display = 'none';
-                }, 1000);
-            }
-        }
-    };
+                        if (loadPage) {
+                            loadPage.style.transition = "opacity 1s ease";
+                            loadPage.style.opacity = '0';
+                            setTimeout(() => {
+                                loadPage.style.display = 'none';
+                            }, 1000);
+                        }
+                    }
+                };
 
-    // 2. УНІВЕРСАЛЬНА ФУНКЦІЯ ДЛЯ МОДАЛЬНИХ ВІКОН (СВАЙП ВНИЗ)
-    const overlay = document.getElementById('overlay');
+                // 2. УНІВЕРСАЛЬНА ФУНКЦІЯ ДЛЯ МОДАЛЬНИХ ВІКОН (СВАЙП ВНИЗ)
+                const overlay = document.getElementById('overlay');
 
-    const ModalMoove = (modal, modalContent, overlay) => {
-        let startY;
-        let currentY;
-        let isDragging = false;
+                const ModalMoove = (modal, modalContent, overlay) => {
+                    let startY;
+                    let currentY;
+                    let isDragging = false;
 
-        modal.addEventListener('touchstart', function (e) {
-            startY = e.touches[0].clientY;
-            isDragging = true;
-            modal.style.transition = 'none';
-            overlay.style.transition = 'none';
-        });
+                    modal.addEventListener('touchstart', function (e) {
+                        startY = e.touches[0].clientY;
+                        isDragging = true;
+                        modal.style.transition = 'none';
+                        overlay.style.transition = 'none';
+                    });
 
-        modal.addEventListener('touchmove', function (e) {
-            if (!isDragging) return;
-            currentY = e.touches[0].clientY;
-            const diffY = currentY - startY;
+                    modal.addEventListener('touchmove', function (e) {
+                        if (!isDragging) return;
+                        currentY = e.touches[0].clientY;
+                        const diffY = currentY - startY;
 
-            // Дозволяємо свайп вниз, якщо контент прокручений до самого верху
-            if (modalContent.scrollTop === 0 && diffY > 0) {
-                e.preventDefault();
-                modal.style.top = `calc(5% + ${diffY}px)`;
-                const opacity = Math.max(0, 0.7 - diffY / 1000);
-                overlay.style.opacity = opacity;
-            }
-        });
+                        // Дозволяємо свайп вниз, якщо контент прокручений до самого верху
+                        if (modalContent.scrollTop === 0 && diffY > 0) {
+                            e.preventDefault();
+                            modal.style.top = `calc(5% + ${diffY}px)`;
+                            const opacity = Math.max(0, 0.7 - diffY / 1000);
+                            overlay.style.opacity = opacity;
+                        }
+                    });
 
-        modal.addEventListener('touchend', function () {
-            isDragging = false;
-            modal.style.transition = 'top 0.3s';
-            overlay.style.transition = 'opacity 0.3s';
+                    modal.addEventListener('touchend', function () {
+                        isDragging = false;
+                        modal.style.transition = 'top 0.3s';
+                        overlay.style.transition = 'opacity 0.3s';
 
-            if (currentY - startY > 200) {
-                // Закриваємо модалку
-                modal.style.top = '100%';
-                modal.classList.remove('open');
-                overlay.classList.add('hidden');
-                overlay.style.opacity = '0';
-            } else {
-                // Повертаємо на місце
-                modal.style.top = '5%';
-                overlay.style.opacity = '0.7';
-            }
-        });
-    };
+                        if (currentY - startY > 200) {
+                            // Закриваємо модалку
+                            modal.style.top = '100%';
+                            modal.classList.remove('open');
+                            overlay.classList.add('hidden'); overlay.style.display = 'none';
+                            overlay.style.opacity = '0';
+                        } else {
+                            // Повертаємо на місце
+                            modal.style.top = '5%';
+                            overlay.style.opacity = '0.7';
+                        }
+                    });
+                };
 
-    // 3. ІНІЦІАЛІЗАЦІЯ МОДАЛОК
-    const setupModal = (id, contentClass) => {
-        const modal = document.getElementById(id);
-        const content = document.querySelector(contentClass);
-        if (modal && content) {
-            ModalMoove(modal, content, overlay);
-        }
-        return modal;
-    };
+                // 3. ІНІЦІАЛІЗАЦІЯ МОДАЛОК
+                const setupModal = (id, contentClass) => {
+                    const modal = document.getElementById(id);
+                    const content = document.querySelector(contentClass);
+                    if (modal && content) {
+                        ModalMoove(modal, content, overlay);
+                    }
+                    return modal;
+                };
 
-    const modalPasport = setupModal('pasport-modal', '.pasport-modal-content');
-    const modalZagran = setupModal('zagran-modal', '.zagran-modal-content');
-    const modalStudy = setupModal('study-modal', '.study-modal-content');
-    const modalPrava = setupModal('prava-modal', '.prava-modal-content');
-    const modaleDoc = setupModal('eDoc-modal', '.eDoc-modal-content');
+                const modalPasport = setupModal('pasport-modal', '.pasport-modal-content');
+                const modalZagran = setupModal('zagran-modal', '.zagran-modal-content');
+                const modalStudy = setupModal('study-modal', '.study-modal-content');
+                const modalPrava = setupModal('prava-modal', '.prava-modal-content');
+                const modaleDoc = setupModal('eDoc-modal', '.eDoc-modal-content');
 
-    // 4. ОБРОБНИКИ КЛІКІВ (ВІДКРИТТЯ)
-    const bindOpenModal = (selector, modalElement, blockClass) => {
-        document.querySelectorAll(selector).forEach((el) => {
-            el.addEventListener('click', function () {
-                modalElement.style.top = '5%';
-                modalElement.classList.add('open');
-                overlay.classList.remove('hidden');
-                overlay.style.opacity = '0.7';
-                
-                // Очищення активних станів (якщо потрібно)
-                if (blockClass) {
-                    $(`.${blockClass}`).removeClass('active');
-                    $(`.${blockClass} > div`).removeClass('active');
-                }
-            });
-        });
-    };
+                // 4. ОБРОБНИКИ КЛІКІВ (ВІДКРИТТЯ)
+                const bindOpenModal = (selector, modalElement, blockClass) => {
+                    document.querySelectorAll(selector).forEach((el) => {
+                        el.addEventListener('click', function () {
+                            modalElement.style.top = '5%';
+                            modalElement.classList.add('open');
+                            overlay.classList.remove('hidden'); overlay.style.display = 'block';
+                            overlay.style.opacity = '0.7';
 
-    bindOpenModal('#fullInfoPasport', modalPasport, 'pasport_block_div');
-    bindOpenModal('#fullInfoZagran', modalZagran, 'zagran_block_div');
-    bindOpenModal('#fullInfoStudy', modalStudy, 'study_block_div');
-    bindOpenModal('#fullInfoeDoc', modaleDoc, 'eDoc_block_div');
-    bindOpenModal('#fullInfoPrava', modalPrava, 'prava_block_div');
+                            // Очищення активних станів (якщо потрібно)
+                            if (blockClass) {
+                                $(`.${blockClass}`).removeClass('active');
+                                $(`.${blockClass} > div`).removeClass('active');
+                            }
+                        });
+                    });
+                };
 
-</script>
+                bindOpenModal('#fullInfoPasport', modalPasport, 'pasport_block_div');
+                bindOpenModal('#fullInfoZagran', modalZagran, 'zagran_block_div');
+                bindOpenModal('#fullInfoStudy', modalStudy, 'study_block_div');
+                bindOpenModal('#fullInfoeDoc', modaleDoc, 'eDoc_block_div');
+                bindOpenModal('#fullInfoPrava', modalPrava, 'prava_block_div');
+
+            </script>
             <style>
                 .swiper-container {
                     max-width: 100%;
@@ -2570,6 +2805,8 @@
                     display: flex;
                     justify-content: center;
                 }
+
+
             </style>
             <div class="documentSlider swiper-container">
                 <div class="swiper-wrapper" style="margin-bottom: 20px;">
@@ -2578,15 +2815,15 @@
                             <div class="content front">
                                 <h1>єДокумент</h1>
                                 <div class="dataBlock">
-                                    <img id="imgPassport" src="" alt="" />
+                                    <img data-field="imgPassport" src="" alt="" />
                                     <div class="dataInfo">
                                         <div>
                                             <span class="dataInfoFirst">Дата народження:</span>
-                                            <span id="birthDate">12.07.1999</span>
+                                            <span data-field="birthDate">12.07.1999</span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">РНОКПП:</span>
-                                            <span id="rnokpp"></span>
+                                            <span data-field="rnokpp"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -2613,7 +2850,7 @@
 
                                 <div class="fioBlock"
                                      style="margin-right: 0">
-                                    <h2 id="name">Тут твоё имя</h2>
+                                    <h2 data-field="name">Тут твоё имя</h2>
                                     <div class="arrowSvg moreInfo"
                                          data-index="eDoc"
                                          style="
@@ -2688,7 +2925,7 @@
                                                   class="dataInfoFirst">РНОКПП</span>
                                         </div>
                                         <div>
-                                            <span id="name"
+                                            <span data-field="name"
                                                   style="
                                                         line-height: 1.4;
                                                         font-size: 15px;
@@ -2700,7 +2937,7 @@
                                                     font-size: 13px;
                                                 ">
                                             <span class="dataInfoFirst">Дата народження:</span>
-                                            <span id="birthDate">12.07.1999</span>
+                                            <span data-field="birthDate">12.07.1999</span>
                                         </div>
                                     </div>
                                 </div>
@@ -2719,7 +2956,7 @@
                                             padding: 7px 0;
                                         ">
                                     • Документ оновлено о
-                                    <span id="getCurrentDateTime"></span>
+                                    <span data-field="getCurrentDateTime"></span>
                                 </div>
 
                                 <div class="fioBlock"
@@ -2740,7 +2977,7 @@
                                                     margin-top: 0;
                                                     font-weight: 300;
                                                 "
-                                            id="rnokpp"></h2>
+                                            data-field="rnokpp"></h2>
                                         <img class="copyPng"
                                              src="assets/copy.png"
                                              alt="" />
@@ -2815,15 +3052,15 @@
                             <div class="content front">
                                 <h1>Паспорт громадянина України</h1>
                                 <div class="dataBlock">
-                                    <img id="imgPassport" src="" alt="" />
+                                    <img data-field="imgPassport" src="" alt="" />
                                     <div class="dataInfo">
                                         <div>
                                             <span class="dataInfoFirst">Дата народження:</span>
-                                            <span id="birthDate">12.07.1999</span>
+                                            <span data-field="birthDate">12.07.1999</span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Номер:</span>
-                                            <span id="nomerPasport">008759371</span>
+                                            <span data-field="nomerPasport">008759371</span>
                                         </div>
                                         <img src="sig.png?timestamp=5699246941" alt="" />
                                     </div>
@@ -2843,12 +3080,12 @@
                                             padding: 7px 0;
                                         ">
                                     • Документ оновлено о
-                                    <span id="getCurrentDateTime"></span>
+                                    <span data-field="getCurrentDateTime"></span>
                                 </div>
 
                                 <div class="fioBlock"
                                      style="margin-right: 0">
-                                    <h2 id="name">Тут твоё имя</h2>
+                                    <h2 data-field="name">Тут твоё имя</h2>
                                     <div class="arrowSvg moreInfo"
                                          data-index="pasport"
                                          style="
@@ -2915,19 +3152,19 @@
                     <div class="swiper-slide">
                         <div class="slider dip">
                             <div class="content front">
-                                <h1 id="stepen_dip">Диплом бакалавра</h1>
+                                <h1 data-field="stepen_dip">Диплом бакалавра</h1>
                                 <div class="dataBlock">
                                     <div class="dataInfo">
                                         <div style="width: 100%">
-                                            <span class="dataInfoFirst" style="width: 100%" id="univer_dip"></span>
+                                            <span class="dataInfoFirst" style="width: 100%" data-field="univer_dip"></span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Дата видачі:</span>
-                                            <span id="dayout_dip"></span>
+                                            <span data-field="dayout_dip"></span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Спеціальність:</span>
-                                            <span id="special_dip"></span>
+                                            <span data-field="special_dip"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -2946,12 +3183,12 @@
                                             padding: 7px 0;
                                         ">
                                     • Документ оновлено о
-                                    <span id="getCurrentDateTime"></span>
+                                    <span data-field="getCurrentDateTime"></span>
                                 </div>
 
                                 <div class="fioBlock"
                                      style="margin-right: 0; margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-                                    <h2 id="number_dip" style="margin-top: 0; width: unset;">2</h2>
+                                    <h2 data-field="number_dip" style="margin-top: 0; width: unset;">2</h2>
                                     <img class="copyPng" src="assets/copy.png" alt="">
 
                                 </div>
@@ -3005,15 +3242,15 @@
                             <div class="content front">
                                 <h1 style="width: 0;">International Passport</h1>
                                 <div class="dataBlock">
-                                    <img id="imgZagran" src="" alt="" />
+                                    <img data-field="imgZagran" src="" alt="" />
                                     <div class="dataInfo">
                                         <div style="width: 100%">
                                             <span class="dataInfoFirst">Date of birth:</span>
-                                            <span id="birthDate">12.07.1999</span>
+                                            <span data-field="birthDate">12.07.1999</span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Document number:</span>
-                                            <span id="zagran_number"></span>
+                                            <span data-field="zagran_number"></span>
                                         </div>
                                         <img src="sig.png?timestamp=5699246941" alt="" />
                                     </div>
@@ -3033,12 +3270,12 @@
                                             padding: 7px 0;
                                         ">
                                     • Document updated оn
-                                    <span id="getCurrentDateTime"></span>
+                                    <span data-field="getCurrentDateTime"></span>
                                 </div>
 
                                 <div class="fioBlock"
                                      style="margin-right: 0">
-                                    <h2 id="nameEn">Тут твоё имя</h2>
+                                    <h2 data-field="nameEn">Тут твоё имя</h2>
                                     <div class="arrowSvg moreInfo"
                                          data-index="zagran"
                                          style="
@@ -3109,19 +3346,19 @@
                                     Студентський квиток
                                 </h1>
                                 <div class="dataBlock">
-                                    <img id="imgStudent" src="" alt="" />
+                                    <img data-field="imgStudent" src="" alt="" />
                                     <div class="dataInfo">
                                         <div>
                                             <span class="dataInfoFirst">Номер:</span>
-                                            <span id="nomerStudy"></span>
+                                            <span data-field="nomerStudy"></span>
                                         </div>
                                         <div style="width: 100%">
                                             <span class="dataInfoFirst">Дійсний до:</span>
-                                            <span id="diusnuyDoStudy"></span>
+                                            <span data-field="diusnuyDoStudy"></span>
                                         </div>
                                         <div style="width: 100%">
                                             <span class="dataInfoFirst">Форма навчання:</span>
-                                            <span id="formaStudy"></span>
+                                            <span data-field="formaStudy"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -3140,12 +3377,12 @@
                                             padding: 7px 0;
                                         ">
                                     • Документ оновлено о
-                                    <span id="getCurrentDateTime"></span>
+                                    <span data-field="getCurrentDateTime"></span>
                                 </div>
 
                                 <div class="fioBlock"
                                      style="margin-right: 0">
-                                    <h2 id="name">Тут твоё имя</h2>
+                                    <h2 data-field="name">Тут твоё имя</h2>
                                     <div class="arrowSvg moreInfo"
                                          data-index="study"
                                          style="
@@ -3214,14 +3451,14 @@
                             <div class="content front">
                                 <h1 style="width: 0">Посвідчення водія</h1>
                                 <div class="dataBlock">
-                                    <img id="imgRights"
+                                    <img data-field="imgRights"
                                          src=""
                                          alt="" />
                                     <div class="dataInfo">
                                         <div>
                                             <span class="dataInfoFirst">Дата народження:</span>
 
-                                            <span id="birthDate">12.07.1999</span>
+                                            <span data-field="birthDate">12.07.1999</span>
                                         </div>
                                         <div style="
                                                     width: 100%;
@@ -3232,7 +3469,7 @@
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Номер документа:</span>
-                                            <span id="pravaNnumber">Тут твои данные</span>
+                                            <span data-field="pravaNnumber">Тут твои данные</span>
                                         </div>
 
 
@@ -3263,7 +3500,7 @@
                                 <div class="fioBlock"
                                      style="margin-right: 0">
 
-                                    <h2 id="name">Тут Твои Данные</h2>
+                                    <h2 data-field="name">Тут Твои Данные</h2>
                                     <div class="arrowSvg moreInfo"
                                          data-index="prava"
                                          style="
@@ -3328,6 +3565,110 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- ======= ДОЗВІЛ НА ЗБРОЮ ======= -->
+                    <div class="swiper-slide">
+                        <div class="slider zbroya">
+                            <div class="content front" style="justify-content: space-between;">
+
+                                <!-- Верхня частина: заголовок + поле зброї -->
+                                <div>
+                                    <h1 style="font-size: 20px; font-weight: 400; line-height: 1.3; margin-bottom: 20px; width: auto;">
+                                        Дозвіл на зберігання і носіння зброї фізичною особою
+                                    </h1>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span style="font-size: 13px; color: rgba(0,0,0,0.6);">Зброя:</span>
+                                        <span data-field="zbroyaType" style="font-size: 13px; font-weight: 300; line-height: 1.4;">Пістолет ПМ (9-мм пістолет Макарова)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Нижня частина: marquee + номер + три точки -->
+                                <div>
+                                    <div class="line2 marquee"
+                                         style="
+                                                background: linear-gradient(90deg, #b6eb9f, #9ccfcf);
+                                                margin: 0 -15px 12px -15px;
+                                                position: relative;
+                                                overflow: hidden;
+                                                font-weight: 300;
+                                                font-size: 13px;
+                                                padding: 7px 0;
+                                            ">
+                                        Дозвіл дійсний &bull; Дозвіл дійсний &bull; Дозвіл дійсний &bull;&nbsp;
+                                    </div>
+
+                                    <div style="
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: space-between;
+                                            ">
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <span data-field="zbroyaNumber"
+                                                  style="font-size: 26px; font-weight: 300;">0000009965</span>
+                                            <img class="copyPng"
+                                                 src="assets/copy.png"
+                                                 alt="" />
+                                        </div>
+                                        <div class="arrowSvg moreInfo"
+                                             data-index="zbroya"
+                                             style="
+                                                    background-color: black;
+                                                    padding: 8px;
+                                                    border-radius: 50%;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    cursor: pointer;
+                                                ">
+                                            <img style="
+                                                        filter: brightness(0) invert(1);
+                                                        width: 18px;
+                                                        height: 18px;
+                                                        transform: rotate(0);
+                                                    "
+                                                 src="assets/dots.png"
+                                                 alt="" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="content back">
+                                <div class="qrcodeBlock">
+                                    <span>
+                                        Код діятиме ще
+                                        <span data-time="2:59">2:59</span>
+                                        хв
+                                    </span>
+                                    <div class="qrshBlock">
+                                        <div class="qrcode changeCode"></div>
+                                        <div class="shText" style="display:none">
+                                            <span>2048</span>
+                                            <span>7731</span>
+                                            <span>99512</span>
+                                        </div>
+                                    </div>
+                                    <div class="qrChange">
+                                        <div data-index="1">
+                                            <div style="background:black">
+                                                <img src="assets/qr-code.png"
+                                                     style="filter:brightness(0) invert(1)"
+                                                     alt="" />
+                                            </div>
+                                            <span>QR-код</span>
+                                        </div>
+                                        <div data-index="2">
+                                            <div>
+                                                <img src="assets/free-icon-barcode-7797192.png" alt="" />
+                                            </div>
+                                            <span>Штрихкод</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ======= /ДОЗВІЛ НА ЗБРОЮ ======= -->
 
                     <div class="swiper-slide">
                         <div class="slider" style="
@@ -3556,7 +3897,7 @@
                         color: rgb(92, 92, 92);
                         margin-bottom: 15px;
                         width: 100%;
-                    ">Версія Дії: 4.7.0.1645</span>
+                    ">Версія Дії: 4.7.0.1488</span>
 
             <style>
                 .columnMenu {
@@ -3699,7 +4040,456 @@
     <script src="values.js"></script>
     <!-- Потом сам скрипт, который их использует -->
     <script src="main.js"></script>
+<style>
+    #admin-panel {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 360px;
+        max-height: 85vh;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        z-index: 999999;
+        overflow-y: auto;
+        padding: 20px;
+        font-family: 'e-Ukraine', sans-serif;
+        color: #000;
+    }
+    #admin-panel.open {
+        display: block;
+    }
+    #admin-panel h3 {
+        margin-top: 0;
+        font-size: 20px;
+        margin-bottom: 15px;
+        font-weight: 300;
+        text-align: center;
+    }
+    #admin-panel h4 {
+        margin: 20px 0 10px 0;
+        font-size: 16px;
+        font-weight: 500;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+    .admin-form-group {
+        margin-bottom: 12px;
+    }
+    .admin-form-group label {
+        display: block;
+        font-size: 11px;
+        margin-bottom: 4px;
+        color: #666;
+    }
+    .admin-form-group input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-family: 'e-Ukraine', sans-serif;
+    }
+    .admin-form-group input[type="file"] {
+        font-size: 12px;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .doc-toggle label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 13px !important;
+        color: #000 !important;
+    }
+    .doc-toggle input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+    .admin-btn-small {
+        background: #e9edee;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 11px;
+        cursor: pointer;
+        display: inline-block;
+        font-family: 'e-Ukraine', sans-serif;
+    }
+    .admin-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        position: sticky;
+        bottom: -20px;
+        background: #fff;
+        padding-bottom: 20px;
+        padding-top: 10px;
+    }
+    .admin-btn {
+        flex: 1;
+        padding: 12px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 12px;
+        background: #000;
+        color: #fff;
+        font-family: 'e-Ukraine', sans-serif;
+    }
+    .admin-btn-close {
+        background: #e9edee;
+        color: #000;
+    }
+</style>
 
+<!-- Local State Editor HTML -->
+<div id="admin-panel" data-scroll-lock-scrollable>
+    <h3>Редактор даних</h3>
+    
+    <div id="admin-inputs-container"></div>
+    
+    <h4>Управління документами</h4>
+    <div id="admin-docs-container"></div>
+    
+    <h4>Фотографії</h4>
+    <div class="admin-form-group">
+        <label>Фото користувача (Головне)</label>
+        <input type="file" id="admin-main-photo" accept="image/*">
+        <button class="admin-btn-small" id="btn-clear-main-photo">Скинути фото</button>
+    </div>
+    <div class="admin-form-group">
+        <label>Фото підпису</label>
+        <input type="file" id="admin-sig-photo" accept="image/*">
+        <button class="admin-btn-small" id="btn-clear-sig-photo">Скинути підпис</button>
+    </div>
+
+    <div class="admin-buttons">
+        <button id="admin-save-btn" class="admin-btn">Зберегти</button>
+        <button id="admin-close-btn" class="admin-btn admin-btn-close">Закрити</button>
+    </div>
+</div>
+
+<!-- Local State Editor Script -->
+<script>
+(function(){
+    // 1. Збираємо основні поля (id) для редагування, які є в розмітці
+    const editableFields = [
+        { id: "textName", label: "Ім'я (Головна: Привіт, ...)" },
+        { id: "name", label: "ПІБ (Укр)" },
+        { id: "nameEn", label: "ПІБ (Англ)" },
+        { id: "birthDate", label: "Дата народження" },
+        { id: "rnokpp", label: "РНОКПП" },
+        { id: "nomerPasport", label: "Номер паспорта (внутрішній)" },
+        { id: "sex", label: "Стать (Укр)" },
+        { id: "sexEn", label: "Стать (Англ)" },
+        { id: "dateGive", label: "Дата видачі (Паспорт)" },
+        { id: "dateOut", label: "Дійсний до (Паспорт)" },
+        { id: "organ", label: "Орган що видав" },
+        { id: "uznr", label: "Запис № (УНЗР)" },
+        { id: "placeBirth", label: "Місце народження" },
+        { id: "legalAdress", label: "Місце проживання" },
+        { id: "registeredOn", label: "Дата реєстрації" },
+        { id: "zagran_number", label: "Номер закордонного паспорта" },
+        { id: "dateGiveZ", label: "Дата видачі (Закордонний)" },
+        { id: "dateOutZ", label: "Дійсний до (Закордонний)" },
+        { id: "nomerStudy", label: "Номер студентського" },
+        { id: "vidanoStudy", label: "Студ. виданий" },
+        { id: "diusnuyDoStudy", label: "Студ. дійсний до" },
+        { id: "formaStudy", label: "Форма навчання" },
+        { id: "university", label: "Назва ВНЗ" },
+        { id: "fakultat", label: "Факультет" },
+        { id: "pravaNnumber", label: "Номер посвідчення водія" },
+        { id: "rightsCategories", label: "Категорії водія (A, B...)" },
+        { id: "zbroyaType", label: "Тип зброї" },
+        { id: "zbroyaNumber", label: "Номер дозволу на зброю" }
+    ];
+
+    // 2. Список документів для можливості включення/виключення
+    const documentTypes = [
+        { key: "doc_eDoc", selector: ".slider.eDoc", label: "єДокумент" },
+        { key: "doc_podatki", selector: ".slider.podatki", label: "Картка платника податків" },
+        { key: "doc_pasport", selector: ".slider.pasport", label: "Паспорт громадянина України" },
+        { key: "doc_dip", selector: ".slider.dip", label: "Диплом бакалавра" },
+        { key: "doc_zagran", selector: ".slider.zagran", label: "Закордонний паспорт" },
+        { key: "doc_study", selector: ".slider.study", label: "Студентський квиток" },
+        { key: "doc_prava", selector: ".slider.prava", label: "Посвідчення водія" },
+        { key: "doc_zbroya", selector: ".slider.zbroya", label: "Дозвіл на зброю" }
+    ];
+
+    const panel = document.getElementById('admin-panel');
+    const container = document.getElementById('admin-inputs-container');
+    const docsContainer = document.getElementById('admin-docs-container');
+    const saveBtn = document.getElementById('admin-save-btn');
+    const closeBtn = document.getElementById('admin-close-btn');
+
+    const LOCAL_STORAGE_KEY = 'diyaLocalState_v1';
+    let savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+
+    // Функція для оновлення текстових DOM-вузлів
+    const updateDOM = (id, value) => {
+        const elements = document.querySelectorAll('[data-field="' + id + '"]');
+        elements.forEach(el => {
+            if (value !== undefined && value !== '') {
+                if (el.tagName === 'IMG') {
+                    el.src = value;
+                } else {
+                    el.textContent = value;
+                }
+            }
+        });
+    };
+
+    // Функція для оновлення видимості слайдів документів
+    const updateDocumentVisibility = (selector, isVisible) => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            const slide = el.closest('.swiper-slide');
+            if (slide) {
+                slide.style.display = isVisible ? '' : 'none';
+            }
+        });
+    };
+
+    // Функція для оновлення фото
+    const updateImages = (key, dataUrl) => {
+        if (!dataUrl) return;
+        if (key === 'mainPhoto') {
+            const selectors = ['#imgPassport', '#imgStudent', '#imgRights', '#imgZagran'];
+            selectors.forEach(sel => {
+                document.querySelectorAll(sel).forEach(img => {
+                    img.src = dataUrl;
+                    img.style.objectFit = 'cover'; // Щоб фото виглядало пропорційно
+                });
+            });
+        } else if (key === 'sigPhoto') {
+            document.querySelectorAll('img[src*="sig.png"]').forEach(img => {
+                img.src = dataUrl;
+            });
+        }
+    };
+
+    // 1. Генерація текстових інпутів
+    editableFields.forEach(field => {
+        const group = document.createElement('div');
+        group.className = 'admin-form-group';
+
+        const label = document.createElement('label');
+        label.textContent = field.label;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.dataset.targetId = field.id;
+
+        if (savedState[field.id] !== undefined) {
+            input.value = savedState[field.id];
+        } else {
+            const el = document.querySelector('[data-field="' + field.id + '"]');
+            if (el) input.value = el.textContent.trim();
+        }
+
+        input.addEventListener('input', (e) => {
+            updateDOM(field.id, e.target.value);
+            savedState[field.id] = e.target.value; // Зберігаємо відразу в state, щоб потім все злити
+        });
+
+        group.appendChild(label);
+        group.appendChild(input);
+        container.appendChild(group);
+    });
+
+    // 2. Генерація чекбоксів документів
+    documentTypes.forEach(doc => {
+        const group = document.createElement('div');
+        group.className = 'admin-form-group doc-toggle';
+        group.innerHTML = `
+            <label>
+                <input type="checkbox" data-target-key="${doc.key}">
+                ${doc.label}
+            </label>
+        `;
+        const checkbox = group.querySelector('input');
+        
+        // По замовчуванню включені
+        const isVisible = savedState[doc.key] !== undefined ? savedState[doc.key] : true;
+        checkbox.checked = isVisible;
+
+        checkbox.addEventListener('change', (e) => {
+            savedState[doc.key] = e.target.checked;
+            updateDocumentVisibility(doc.selector, e.target.checked);
+        });
+
+        docsContainer.appendChild(group);
+    });
+
+    // 3. Обробка фотографій
+    const processPhoto = (file, key) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const dataUrl = e.target.result;
+            savedState[key] = dataUrl;
+            updateImages(key, dataUrl);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // Завантаження фото за допомогою canvas для стиснення до localStorage (щоб не перевищити ліміт)
+    const compressAndSavePhoto = (file, key, maxWidth = 600) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                savedState[key] = dataUrl;
+                updateImages(key, dataUrl);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    document.getElementById('admin-main-photo').addEventListener('change', (e) => {
+        compressAndSavePhoto(e.target.files[0], 'mainPhoto', 600);
+    });
+    
+    document.getElementById('admin-sig-photo').addEventListener('change', (e) => {
+        compressAndSavePhoto(e.target.files[0], 'sigPhoto', 400); // Підпис можна робити ще меншим
+    });
+
+    document.getElementById('btn-clear-main-photo').addEventListener('click', () => {
+        delete savedState['mainPhoto'];
+        alert('Фото скинуто. Після збереження воно зникне (або повернеться оригінальне).');
+    });
+
+    document.getElementById('btn-clear-sig-photo').addEventListener('click', () => {
+        delete savedState['sigPhoto'];
+        alert('Підпис скинуто. Після збереження оновіть сторінку.');
+    });
+
+    // 4. Обробник збереження у localStorage
+    saveBtn.addEventListener('click', () => {
+        // Збираємо зі всіх текстових полів
+        const inputs = container.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            savedState[input.dataset.targetId] = input.value;
+        });
+
+        // Зберігаємо весь state
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedState));
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✓ Збережено!';
+            setTimeout(() => saveBtn.textContent = originalText, 1500);
+        } catch (e) {
+            console.error('localStorage error:', e);
+            // Try to save without photos
+            const stateWithoutPhotos = Object.assign({}, savedState);
+            delete stateWithoutPhotos.mainPhoto;
+            delete stateWithoutPhotos.sigPhoto;
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stateWithoutPhotos));
+                saveBtn.textContent = '⚠ Збережено без фото';
+                setTimeout(() => saveBtn.textContent = 'Зберегти', 2000);
+                alert("Текстові дані збережено. Фотографії занадто великі - спробуйте менші зображення.");
+            } catch(e2) {
+                alert("Помилка збереження. Очистіть кеш браузера і спробуйте знову.");
+            }
+        }
+    });
+
+    // Закриття панелі
+    closeBtn.addEventListener('click', () => {
+        panel.classList.remove('open');
+    });
+
+    // Гарячі клавіші: Ctrl + Shift + X 
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.code === 'KeyX') {
+            e.preventDefault();
+            panel.classList.toggle('open');
+        }
+    });
+
+    // Потрійний клік по логотипам
+    let clickCount = 0;
+    let clickTimer = null;
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.diia-logo-black') || e.target.closest('.mct-logo') || e.target.closest('.logos-container')) {
+            clickCount++;
+            if (clickCount === 3) {
+                panel.classList.toggle('open');
+                clickCount = 0;
+            }
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => { clickCount = 0; }, 500);
+        }
+    });
+
+    // Відновлення всіх даних при завантаженні
+    const applySavedState = () => {
+        savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+        
+        // Застосовуємо текст
+        Object.keys(savedState).forEach(id => {
+            if (id.startsWith('doc_') || id === 'mainPhoto' || id === 'sigPhoto') return;
+            updateDOM(id, savedState[id]);
+            const input = container.querySelector(`input[data-target-id="${id}"]`);
+            if (input) input.value = savedState[id];
+        });
+        // Also update the admin input fields
+        const adminInputs = document.getElementById('admin-inputs-container');
+        if (adminInputs) {
+            adminInputs.querySelectorAll('input[data-target-id]').forEach(inp => {
+                const val = savedState[inp.dataset.targetId];
+                if (val !== undefined) inp.value = val;
+            });
+        }
+
+        // Застосовуємо видимість документів
+        documentTypes.forEach(doc => {
+            const isVisible = savedState[doc.key] !== undefined ? savedState[doc.key] : true;
+            updateDocumentVisibility(doc.selector, isVisible);
+        });
+
+        // Застосовуємо фото
+        if (savedState['mainPhoto']) updateImages('mainPhoto', savedState['mainPhoto']);
+        if (savedState['sigPhoto']) updateImages('sigPhoto', savedState['sigPhoto']);
+    };
+
+    applySavedState();
+    window.addEventListener('load', () => {
+        setTimeout(applySavedState, 300); // З невеликою затримкою для надійності
+        
+        // Swiper може скинути display: none під час ініціалізації
+        setTimeout(() => {
+            documentTypes.forEach(doc => {
+                updateDocumentVisibility(doc.selector, savedState[doc.key] !== undefined ? savedState[doc.key] : true);
+            });
+        }, 1000);
+    });
+})();
+</script>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
@@ -3802,7 +4592,7 @@
 
 
     var marquee = $('.line1');
-
+    try {
     // Дублируем контент, чтобы создать эффект непрерывного движения
     var originalContent = marquee.html();
     marquee.html(originalContent + originalContent);
@@ -3844,6 +4634,13 @@
         gap: 50,
         duration: 15000,
     });
+    } catch(e) {
+        // Fallback: CSS animation if jQuery marquee unavailable
+        document.querySelectorAll('.line1, .line2').forEach(function(el) {
+            el.style.overflow = 'hidden';
+            el.style.whiteSpace = 'nowrap';
+        });
+    }
 
     function vhod(type) {
         if ($('.start-vhod > div.active')[0]) {
@@ -3961,7 +4758,7 @@
 
 
 
-    document.querySelectorAll('#dataNow').forEach(function (el) {
+    document.querySelectorAll('[data-field="dataNow"]').forEach(function (el) {
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0'); // Январь — это 0!
@@ -3986,90 +4783,231 @@
         });
     });
 
-    let countdownInterval;
+    // ─────────────────────────────────────────────────────────────
+    // QR-ТАЙМЕР: кожна картка має свій незалежний інтервал
+    // ─────────────────────────────────────────────────────────────
+    const cardTimers = new Map(); // slider-element → { interval, minutes, seconds }
 
-    // Функция для запуска обратного отсчета
-    function startCountdown(element, minutes, seconds) {
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
+    function startCardCountdown(sliderEl) {
+        // Зупиняємо попередній таймер цієї картки (якщо є)
+        if (cardTimers.has(sliderEl)) {
+            clearInterval(cardTimers.get(sliderEl).interval);
         }
-        // Обновление элемента на странице, чтобы отобразить текущее время обратного отсчета
-        function updateCountdown() {
-            // Если время вышло, остановите таймер
-            if (minutes === 0 && seconds === 0) {
-                clearInterval(countdownInterval);
+
+        const el = sliderEl.querySelector('.qrcodeBlock > span > span');
+        if (!el) return;
+
+        // Скидаємо до 2:59
+        let minutes = 2;
+        let seconds = 59;
+        el.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+        // Анімація пульсації QR під час відліку
+        const qrEl = sliderEl.querySelector('.changeCode');
+
+        const interval = setInterval(() => {
+            seconds--;
+            if (seconds < 0) { seconds = 59; minutes--; }
+            if (minutes < 0) {
+                clearInterval(interval);
+                cardTimers.delete(sliderEl);
+                el.textContent = '0:00';
+                if (qrEl) qrEl.style.opacity = '0.3';
                 return;
             }
+            el.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
 
-            // Уменьшите количество секунд
-            seconds--;
-
-            // Если секунды меньше нуля, уменьшите количество минут и установите секунды в 59
-            if (seconds < 0) {
-                seconds = 59;
-                minutes--;
+            // Останні 30 секунд — QR блимає
+            if (minutes === 0 && seconds <= 30 && qrEl) {
+                qrEl.style.transition = 'opacity 0.4s';
+                qrEl.style.opacity = seconds % 2 === 0 ? '1' : '0.5';
             }
+        }, 1000);
 
-            // Обновите элемент обратного отсчета на странице
-            element.textContent = `${minutes}:${seconds < 10 ? '0' : ''
-                }${seconds}`;
-        }
-
-        // Запустите таймер, вызывая updateCountdown каждую секунду
-        countdownInterval = setInterval(updateCountdown, 1000);
+        cardTimers.set(sliderEl, { interval, minutes, seconds });
     }
 
-    // Найдите все элементы с классом 'countdown'
-    const countdownElements = document.querySelectorAll(
-        '.qrcodeBlock > span > span'
-    );
+    // ─────────────────────────────────────────────────────────────
+    // FLIP-КАРТКИ — оригінальна логіка +=180 через anime.js
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.slider').forEach((sliderEl) => {
+        sliderEl.addEventListener('click', function (e) {
+            // Ігноруємо кліки по кнопках всередині картки
+            if (e.target.closest('.qrChange, .copyPng, .moreInfo')) return;
 
-    document.querySelectorAll('.slider').forEach((e) => {
-        e.addEventListener('click', function () {
-            const current = $(this);
-            const element = this.querySelector(
-                '.qrcodeBlock > span > span'
-            );
-            const time = element.getAttribute('data-time').split(':');
-            const minutes = parseInt(time[0], 10);
-            const seconds = parseInt(time[1], 10);
-            startCountdown(element, minutes, seconds);
+            // Визначаємо поточний кут з transform-рядка
+            const style = sliderEl.getAttribute('style') || '';
+            const match = style.match(/rotateY\((-?[\d.]+)deg\)/);
+            const currentAngle = match ? parseFloat(match[1]) : 0;
+            const isFlipped = (Math.round(currentAngle) % 360 !== 0);
 
             anime({
-                targets: e,
-                rotateY: {
-                    value: '+=180',
-                    delay: 0,
-                },
-                easing: 'linear',
-                duration: 100,
-                complete: function (anim) {
-                    playing = false;
-                },
+                targets: sliderEl,
+                rotateY: { value: '+=180', delay: 0 },
+                easing: 'easeInOutQuad',
+                duration: 300,
             });
 
-            document.querySelectorAll('.slider').forEach((e) => {
-                const el = e.getAttribute('style');
-                if (el) {
-                    const transformMatch = el.match(
-                        /rotateY\((-?\d+(\.\d+)?)deg\)/
-                    );
-                    const rotate = transformMatch[1];
-                    if (Number.isInteger(Number(rotate) / 360)) {
-                        console.log('открыто');
-                    } else {
-                        e.setAttribute(
-                            'style',
-                            'transform: rotateY(0deg);'
-                        );
-                    }
+            // При відкритті (лицева → QR)
+            if (!isFlipped) {
+                startCardCountdown(sliderEl);
+
+                const qrChange = sliderEl.querySelector('.changeCode');
+                if (qrChange) {
+                    qrChange.classList.remove('shcode');
+                    qrChange.classList.add('qrcode');
+                    qrChange.style.opacity = '1';
+                }
+                const shText = sliderEl.querySelector('.shText');
+                if (shText) shText.style.display = 'none';
+
+                const btns = sliderEl.querySelectorAll('.qrChange > div > div');
+                btns.forEach((b, i) => {
+                    b.style.background = i === 0 ? 'black' : '#ddd';
+                    const img = b.querySelector('img');
+                    if (img) img.style.filter = i === 0 ? 'brightness(0) invert(1)' : '';
+                });
+            } else {
+                // При закритті зупиняємо таймер
+                if (cardTimers.has(sliderEl)) {
+                    clearInterval(cardTimers.get(sliderEl).interval);
+                    cardTimers.delete(sliderEl);
+                }
+            }
+        });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // QR ↔ BARCODE перемикач — ізольований до своєї картки
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.qrChange').forEach((qrChangeBlock) => {
+        const sliderEl = qrChangeBlock.closest('.slider');
+
+        qrChangeBlock.querySelectorAll('div[data-index] > div').forEach((btn) => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                const parent = this.parentNode; // div[data-index]
+                const isQR = parent.getAttribute('data-index') === '1';
+
+                // Знаходимо елементи тільки всередині цієї картки
+                const changeCode = sliderEl.querySelector('.changeCode');
+                const shText = sliderEl.querySelector('.shText');
+                const allBtns = qrChangeBlock.querySelectorAll('div[data-index] > div');
+
+                // Скидаємо всі кнопки
+                allBtns.forEach((b) => {
+                    b.style.background = '#ddd';
+                    const img = b.querySelector('img');
+                    if (img) img.style.filter = '';
+                });
+
+                // Активуємо поточну
+                this.style.background = 'black';
+                const activeImg = this.querySelector('img');
+                if (activeImg) activeImg.style.filter = 'brightness(0) invert(1)';
+
+                if (isQR) {
+                    changeCode.classList.remove('shcode');
+                    changeCode.classList.add('qrcode');
+                    if (shText) shText.style.display = 'none';
+                } else {
+                    changeCode.classList.add('shcode');
+                    changeCode.classList.remove('qrcode');
+                    if (shText) shText.style.display = 'flex';
                 }
             });
         });
     });
 
-    window.addEventListener('DOMContentLoaded', function () {
+    // ─────────────────────────────────────────────────────────────
+    // АНІМАЦІЯ КНОПОК ПІН-КОДУ
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.start-block > button').forEach((btn) => {
+        btn.addEventListener('pointerdown', function () {
+            anime({
+                targets: this,
+                scale: [1, 0.88],
+                duration: 80,
+                easing: 'easeOutQuad',
+            });
+        });
+        btn.addEventListener('pointerup', function () {
+            anime({
+                targets: this,
+                scale: [0.88, 1],
+                duration: 200,
+                easing: 'spring(1, 80, 18, 0)',
+            });
+        });
+        btn.addEventListener('pointerleave', function () {
+            anime({ targets: this, scale: 1, duration: 150, easing: 'easeOutQuad' });
+        });
+    });
 
+    // ─────────────────────────────────────────────────────────────
+    // АНІМАЦІЯ ПІН-КРАПОК — spring bounce при заповненні
+    // ─────────────────────────────────────────────────────────────
+    const origVhod = window.vhod; // зберігаємо оригінал якщо є
+    function animatePinDots() {
+        const activeDots = document.querySelectorAll('.start-vhod > div.active');
+        activeDots.forEach((dot) => {
+            anime({
+                targets: dot,
+                scale: [1.5, 1],
+                duration: 400,
+                easing: 'spring(1, 80, 20, 0)',
+            });
+        });
+    }
+
+    // Перехоплюємо клік по кнопках пін-коду для анімації крапок
+    document.querySelectorAll('.start-block > button:not([data-type])').forEach((btn) => {
+        btn.addEventListener('click', function () {
+            // Невелика затримка щоб dot.active вже був проставлений
+            setTimeout(animatePinDots, 10);
+        });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // АНІМАЦІЯ FOOTER-TABS — підсвічування активної вкладки
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.footer > div').forEach((tab) => {
+        tab.addEventListener('pointerdown', function () {
+            anime({
+                targets: this,
+                scale: [1, 0.9],
+                duration: 80,
+                easing: 'easeOutQuad',
+            });
+        });
+        tab.addEventListener('pointerup', function () {
+            anime({
+                targets: this,
+                scale: [0.9, 1],
+                duration: 250,
+                easing: 'spring(1, 80, 15, 0)',
+            });
+        });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // COPY — мікро-анімація іконки при копіюванні
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.copyPng').forEach((icon) => {
+        icon.addEventListener('click', function (e) {
+            e.stopPropagation();
+            anime({
+                targets: this,
+                scale: [1, 1.5, 1],
+                duration: 400,
+                easing: 'spring(1, 80, 20, 0)',
+            });
+            showNotification();
+        });
+    });
+
+    window.addEventListener('DOMContentLoaded', function () {
 
         // Удаляем блоки, если документ неактивен
         var statusMapping = [
@@ -4086,47 +5024,7 @@
             }
         });
 
-        // ==== 2. Логика для кликов по .qrChange > div > div (можно и без jQuery-стилей): ====
-        document.querySelectorAll('.qrChange > div > div').forEach(function (e) {
-            e.addEventListener('click', function (event) {
-                event.stopPropagation();
-
-                // Стилизация выбранного блока
-                this.style.background = 'black';
-                let img = this.querySelector('img');
-                if (img) img.style.filter = 'brightness(0) invert(1)';
-
-                // Определяем родителя и соседей
-                const our = this.parentNode;
-                let need;
-                if (our.getAttribute('data-index') === '1') {
-                    document.querySelector('.changeCode').classList.remove('shcode');
-                    document.querySelector('.changeCode').classList.add('qrcode');
-                    document.querySelector('.shText').style.display = 'none';
-                    need = our.nextElementSibling && our.nextElementSibling.getAttribute('data-index') === '2'
-                        ? our.nextElementSibling
-                        : null;
-                } else {
-                    document.querySelector('.changeCode').classList.add('shcode');
-                    document.querySelector('.changeCode').classList.remove('qrcode');
-                    document.querySelector('.shText').style.display = 'flex';
-                    need = our.previousElementSibling && our.previousElementSibling.getAttribute('data-index') === '1'
-                        ? our.previousElementSibling
-                        : null;
-                }
-                if (need) {
-                    need.querySelectorAll('div').forEach(function (div) {
-                        div.style.background = '#ddd';
-                    });
-                    need.querySelectorAll('div > img').forEach(function (img) {
-                        img.style.filter = 'brightness(1) invert(0)';
-                    });
-                }
-
-            });
-        });
-
-        // ==== 3. Запускаем Swiper только если контейнеры есть ====
+        // Swiper — документи
         if (document.querySelector('.documentSlider')) {
             new Swiper('.documentSlider', {
                 pagination: {
@@ -4138,6 +5036,7 @@
             });
         }
 
+        // Swiper — новини
         if (document.querySelector('.sliderNews')) {
             new Swiper('.sliderNews', {
                 pagination: {
@@ -4178,7 +5077,7 @@
     }
 
     // Выводим текущие дату и время в нужном формате
-    document.querySelectorAll('#getCurrentDateTime').forEach((e) => {
+    document.querySelectorAll('[data-field="getCurrentDateTime"]').forEach((e) => {
         e.textContent = getCurrentDateTime();
     });
 
@@ -4198,7 +5097,7 @@
                 easing: 'linear',
                 duration: 100,
                 complete: function (anim) {
-                    playing = false;
+                    // animation complete
                 },
             });
 
@@ -4242,7 +5141,7 @@
                 easing: 'linear',
                 duration: 100,
                 complete: function (anim) {
-                    playing = false;
+                    // animation complete
                 },
             });
 
