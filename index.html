@@ -1150,7 +1150,7 @@ input[type=file].hidden-file { display:none; }
                     <img src="assets/document.png" alt="" />
                     <span>Повна інформація</span>
                 </div>
-                <div class="border" class="openQrBtn" data-index="eDoc">
+                <div class="border openQrBtn" data-index="eDoc">
                     <img src="assets/qr-code.png" alt="" />
                     <span>Код для перевірки</span>
                 </div>
@@ -4373,13 +4373,14 @@ input[type=file].hidden-file { display:none; }
   const updateImages = (key, dataUrl) => {
     if (!dataUrl) return;
     if (key === 'mainPhoto') {
-      ['#imgPassport','#imgStudent','#imgRights','#imgZagran'].forEach(sel => {
-        document.querySelectorAll(sel).forEach(img => { img.src = dataUrl; img.style.objectFit='cover'; });
+      // FIX: use data-field attribute selectors (not #id which don't exist)
+      ['imgPassport','imgStudent','imgRights','imgZagran'].forEach(field => {
+        document.querySelectorAll('[data-field="'+field+'"]').forEach(img => { img.src = dataUrl; img.style.objectFit='cover'; });
       });
-      document.getElementById('preview-main') && (document.getElementById('preview-main').src = dataUrl);
+      const pm = document.getElementById('preview-main'); if (pm) pm.src = dataUrl;
     } else if (key === 'sigPhoto') {
       document.querySelectorAll('img[src*="sig.png"], .js-sig').forEach(img => img.src = dataUrl);
-      document.getElementById('preview-sig') && (document.getElementById('preview-sig').src = dataUrl);
+      const ps = document.getElementById('preview-sig'); if (ps) ps.src = dataUrl;
     }
   };
 
@@ -4597,10 +4598,24 @@ input[type=file].hidden-file { display:none; }
   }, {passive:true});
   document.addEventListener('touchend', () => clearTimeout(lpTimer));
 
-  /* Copy triggers */
+  /* Copy triggers — FIX: actually copy adjacent text to clipboard */
   document.addEventListener('click', e => {
     const copyBtn = e.target.closest('.copyPng');
-    if (copyBtn) { e.stopPropagation(); showNotif('Номер скопійовано'); }
+    if (copyBtn) {
+      e.stopPropagation();
+      // Find adjacent text element (previous sibling h3/span or parent's text)
+      var textToCopy = '';
+      var prev = copyBtn.previousElementSibling;
+      if (prev) textToCopy = prev.textContent.trim();
+      if (!textToCopy) {
+        var par = copyBtn.parentElement;
+        if (par) { var h = par.querySelector('h3,span,[data-field]'); if(h) textToCopy = h.textContent.trim(); }
+      }
+      if (textToCopy && navigator.clipboard) {
+        navigator.clipboard.writeText(textToCopy).catch(function(){});
+      }
+      showNotif('Номер скопійовано');
+    }
   });
 
   /* ─ INIT ─ */
@@ -4747,15 +4762,7 @@ document.querySelectorAll('.close_block').forEach(el => {
 
     var marquee = $('.line1');
     try {
-    // Дублируем контент, чтобы создать эффект непрерывного движения
-    var originalContent = marquee.html();
-    marquee.html(originalContent + originalContent);
-
-    // Вычисляем ширину контента и устанавливаем начальное положение
-    var contentWidth = marquee[0].scrollWidth / 2;
-    marquee.scrollLeft(contentWidth);
-
-    // Запускаем анимацию
+    // FIX: removed manual html duplication (breaks plugin) — plugin's duplicated:true handles it
     marquee.marquee({
         allowCss3Support: true,
         css3easing: 'linear',
@@ -4768,16 +4775,7 @@ document.querySelectorAll('.close_block').forEach(el => {
     });
 
     var marquee2 = $('.line2');
-
-    // Дублируем контент, чтобы создать эффект непрерывного движения
-    var originalContent = marquee2.html();
-    marquee2.html(originalContent + originalContent);
-
-    // Вычисляем ширину контента и устанавливаем начальное положение
-    var contentWidth = marquee2[0].scrollWidth / 2;
-    marquee2.scrollLeft(contentWidth);
-
-    // Запускаем анимацию
+    // FIX: removed manual html duplication
     marquee2.marquee({
         allowCss3Support: true,
         css3easing: 'linear',
@@ -4791,35 +4789,54 @@ document.querySelectorAll('.close_block').forEach(el => {
     } catch(e) {
         // Fallback: CSS animation if jQuery marquee unavailable
         document.querySelectorAll('.line1, .line2').forEach(function(el) {
-            el.style.overflow = 'hidden';
-            el.style.whiteSpace = 'nowrap';
+            var inner = el.innerHTML;
+            el.innerHTML = '<span class="marquee-css-inner">' + inner + inner + '</span>';
+            var spd = el.classList.contains('line1') ? 5 : 15;
+            el.querySelector('.marquee-css-inner').style.animationDuration = spd + 's';
         });
     }
 
-    function vhod(type) {
-        if ($('.start-vhod > div.active')[0]) {
-            if (type === 'plus') {
-                $('.start-vhod > div')[
-                    document.querySelectorAll('.start-vhod > div.active')
-                        .length
-                ].classList.add('active');
-                if (
-                    document.querySelectorAll('.start-vhod > div.active')
-                        .length == 4
-                ) {
-                    $('.start-div').removeClass('active');
-                    $('.main').addClass('active');
-
-                    $('.blockStart').addClass('active');
+    // FIX: PIN validation with digit tracking and stored PIN check
+    var pinDigits = [];
+    function vhod(type, digit) {
+        if (type === 'plus') {
+            if (pinDigits.length >= 4) return;
+            pinDigits.push(digit || 'x');
+            var idx = pinDigits.length - 1;
+            $('.start-vhod > div').eq(idx).addClass('active');
+            // Animate dot
+            if (typeof anime !== 'undefined') {
+                anime({ targets: $('.start-vhod > div')[idx], scale: [1.5, 1], duration: 350, easing: 'spring(1,80,18,0)' });
+            }
+            if (pinDigits.length === 4) {
+                // Get stored PIN
+                var storedPin = '0000';
+                try { var _s = JSON.parse(localStorage.getItem('diyaLocalState_v2') || '{}'); storedPin = _s.pin || '0000'; } catch(e) {}
+                var entered = pinDigits.join('');
+                var correct = (storedPin === '0000') || (entered === storedPin);
+                if (correct) {
+                    $('.start-vhod > div').addClass('success');
+                    setTimeout(function() {
+                        $('.start-div').removeClass('active');
+                        $('.main').addClass('active');
+                        $('.blockStart').addClass('active');
+                        pinDigits = [];
+                        $('.start-vhod > div').removeClass('active success');
+                    }, 350);
+                } else {
+                    $('.start-vhod > div').addClass('error');
+                    setTimeout(function() {
+                        pinDigits = [];
+                        $('.start-vhod > div').removeClass('active error');
+                    }, 700);
                 }
-            } else {
-                $('.start-vhod > div')[
-                    document.querySelectorAll('.start-vhod > div.active')
-                        .length - 1
-                ].classList.remove('active');
             }
         } else {
-            $('.start-vhod > div')[0].classList.add('active');
+            // delete
+            if (pinDigits.length > 0) {
+                pinDigits.pop();
+                $('.start-vhod > div').eq(pinDigits.length).removeClass('active');
+            }
         }
     }
 
@@ -4830,7 +4847,7 @@ document.querySelectorAll('.close_block').forEach(el => {
                 if ($(this).attr('data-type') == 'delete') {
                     vhod('minus');
                 } else {
-                    vhod('plus');
+                    vhod('plus', $(this).text().trim());
                 }
             });
         });
@@ -4923,19 +4940,10 @@ document.querySelectorAll('.close_block').forEach(el => {
 
     const notification = document.getElementById('notification');
 
-    function showNotification() {
-        notification.classList.add('show');
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    }
+    // FIX: unified notification — uses showNotif from IIFE above
+    function showNotification() { if(typeof showNotif!=='undefined') showNotif('Номер скопійовано'); }
 
-    document.querySelectorAll('.copyPng').forEach((el) => {
-        el.addEventListener('click', function (e) {
-            e.stopPropagation();
-            showNotification();
-        });
-    });
+    // FIX: copyPng click — handled by IIFE showNotif above; outer duplicate removed
 
     // ─────────────────────────────────────────────────────────────
     // QR-ТАЙМЕР: кожна картка має свій незалежний інтервал
@@ -5163,17 +5171,19 @@ document.querySelectorAll('.close_block').forEach(el => {
 
     window.addEventListener('DOMContentLoaded', function () {
 
-        // Удаляем блоки, если документ неактивен
+        // FIX: remove entire swiper-slide (not just the card child) to avoid empty slides
         var statusMapping = [
-            { enabled: isRightsEnabled, selector: '.prava' },
-            { enabled: isStudyEnabled, selector: '.study' },
-            { enabled: isZagranEnabled, selector: '.zagran' },
-            { enabled: isDiplomaEnabled, selector: '.dip' }
+            { enabled: typeof isRightsEnabled !== 'undefined' ? isRightsEnabled : true, selector: '.prava' },
+            { enabled: typeof isStudyEnabled  !== 'undefined' ? isStudyEnabled  : true, selector: '.study' },
+            { enabled: typeof isZagranEnabled !== 'undefined' ? isZagranEnabled : true, selector: '.zagran' },
+            { enabled: typeof isDiplomaEnabled !== 'undefined' ? isDiplomaEnabled : true, selector: '.dip' }
         ];
         statusMapping.forEach(function (item) {
             if (!item.enabled) {
                 document.querySelectorAll(item.selector).forEach(function (el) {
-                    if (el.parentNode) el.parentNode.remove();
+                    var slide = el.closest('.swiper-slide');
+                    if (slide && slide.parentNode) slide.parentNode.removeChild(slide);
+                    else if (el.parentNode) el.parentNode.removeChild(el);
                 });
             }
         });
@@ -5235,7 +5245,7 @@ document.querySelectorAll('.close_block').forEach(el => {
         e.textContent = getCurrentDateTime();
     });
 
-    document.querySelectorAll('#openQr').forEach(function (e) {
+    document.querySelectorAll('.openQrBtn').forEach(function (e) {
         e.addEventListener('click', function (element) {
             const type = $(this).attr('data-index');
             const div = document.querySelector(`.${type}`);
@@ -5279,7 +5289,7 @@ document.querySelectorAll('.close_block').forEach(el => {
         });
     });
 
-    document.querySelectorAll('#openSh').forEach(function (e) {
+    document.querySelectorAll('.openShBtn').forEach(function (e) {
         e.addEventListener('click', function (element) {
             const type = $(this).attr('data-index');
             const div = document.querySelector(`.${type}`);
@@ -5327,9 +5337,7 @@ document.querySelectorAll('.close_block').forEach(el => {
 
 
 
-    setTimeout(function () {
-        $('.block2.active').removeClass('active');
-    }, 1000);
+    // FIX: removed erroneous block2 deactivation timeout
 
     // $('.study').parent('div').remove();
 
