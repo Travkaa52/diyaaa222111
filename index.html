@@ -936,6 +936,14 @@ input[type=file].hidden-file { display:none; }
 /* ─ Nononono ─ */
 .nononopage { background:#fff!important; overflow:auto!important; display:flex!important; flex-direction:column; align-items:center; justify-content:center; height:100vh; padding:30px; text-align:center; }
 
+/* ─ IO tab ─ */
+.io-action-row { display:flex; align-items:center; gap:12px; padding:10px 12px; background:#f8f8f8; border-radius:10px; margin-bottom:10px; transition:background .15s; }
+.io-action-row:active { background:#eee; }
+.io-icon { font-size:22px; flex-shrink:0; width:30px; text-align:center; }
+.io-info { flex:1; }
+.io-info p { font-size:13px; font-weight:300; margin-bottom:2px; }
+.io-info span { font-size:11px; color:#a1a1a1; }
+
 </style>
 
 
@@ -4223,6 +4231,7 @@ input[type=file].hidden-file { display:none; }
     <button class="admin-tab-btn active" data-admintab="info">Дані</button>
     <button class="admin-tab-btn" data-admintab="docs">Документи</button>
     <button class="admin-tab-btn" data-admintab="photos">Фото</button>
+    <button class="admin-tab-btn" data-admintab="io">Файл</button>
   </div>
   <div class="admin-tab-content active" id="admintab-info">
     <div id="admin-inputs-container"></div>
@@ -4257,6 +4266,62 @@ input[type=file].hidden-file { display:none; }
       </div>
     </div>
   </div>
+  <div class="admin-tab-content" id="admintab-io">
+    <div class="admin-section-label">Завантажити дані з пристрою</div>
+    <p style="font-size:12px;color:#666;margin-bottom:12px;font-weight:300;">Завантажте раніше збережений файл профілю (.json) або фото документа, щоб автоматично заповнити всі поля.</p>
+
+    <div class="io-action-row" id="btn-import-json">
+      <div class="io-icon">📥</div>
+      <div class="io-info">
+        <p>Завантажити профіль</p>
+        <span>Файл .json з усіма даними та фото</span>
+      </div>
+      <button class="photo-change-btn">Вибрати</button>
+    </div>
+
+    <div class="io-action-row" id="btn-import-photo-all">
+      <div class="io-icon">🖼️</div>
+      <div class="io-info">
+        <p>Фото для всіх документів</p>
+        <span>JPG / PNG — замінить головне фото</span>
+      </div>
+      <button class="photo-change-btn">Вибрати</button>
+    </div>
+
+    <div class="io-action-row" id="btn-import-sig-quick">
+      <div class="io-icon">✍️</div>
+      <div class="io-info">
+        <p>Фото підпису</p>
+        <span>JPG / PNG — підпис на документах</span>
+      </div>
+      <button class="photo-change-btn">Вибрати</button>
+    </div>
+
+    <div class="admin-section-label" style="margin-top:18px">Зберегти дані на пристрій</div>
+    <p style="font-size:12px;color:#666;margin-bottom:12px;font-weight:300;">Збережіть усі дані профілю у файл на своєму пристрої, щоб потім відновити або перенести.</p>
+
+    <div class="io-action-row" id="btn-export-json" style="cursor:pointer">
+      <div class="io-icon">📤</div>
+      <div class="io-info">
+        <p>Зберегти профіль</p>
+        <span>Завантажить файл .json на пристрій</span>
+      </div>
+      <button class="photo-change-btn" style="background:#222">Зберегти</button>
+    </div>
+
+    <div class="admin-section-label" style="margin-top:18px;color:#c00">Небезпечна зона</div>
+    <div class="io-action-row" id="btn-reset-all" style="cursor:pointer;background:#fff5f5">
+      <div class="io-icon">🗑️</div>
+      <div class="io-info">
+        <p style="color:#c00">Скинути всі дані</p>
+        <span>Видалить усі збережені поля та фото</span>
+      </div>
+      <button class="photo-change-btn" style="background:#c00">Скинути</button>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
   <div class="admin-footer">
     <button class="admin-save-btn" id="admin-save-btn">Зберегти</button>
     <button class="admin-cancel-btn" id="admin-close-btn">Закрити</button>
@@ -4264,6 +4329,9 @@ input[type=file].hidden-file { display:none; }
 </div>
 <input type="file" id="admin-main-photo" class="hidden-file" accept="image/*">
 <input type="file" id="admin-sig-photo" class="hidden-file" accept="image/*">
+<input type="file" id="admin-import-json-file" class="hidden-file" accept=".json,application/json">
+<input type="file" id="admin-import-photo-all-file" class="hidden-file" accept="image/*">
+<input type="file" id="admin-import-sig-quick-file" class="hidden-file" accept="image/*">
 
 
 <script>
