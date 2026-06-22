@@ -3645,7 +3645,7 @@ input[type=file].hidden-file { display:none; }
 
                                                 ">
                                             <span class="dataInfoFirst">Категорія:</span>
-                                            <span id="rightsCategories">A, B</span>
+                                            <span data-field="rightsCategories">A, B</span>
                                         </div>
                                         <div>
                                             <span class="dataInfoFirst">Номер документа:</span>
@@ -4431,7 +4431,7 @@ input[type=file].hidden-file { display:none; }
 
   /* ─ DOM UPDATE ─ */
   const updateDOM = (id, value) => {
-    if (!value && value !== '') return;
+    if (value === undefined || value === null) return;
     document.querySelectorAll('[data-field="'+id+'"]').forEach(el => {
       if (el.tagName === 'IMG') el.src = value;
       else el.textContent = value;
@@ -4469,6 +4469,39 @@ input[type=file].hidden-file { display:none; }
     clearTimeout(notifTimer);
     notifTimer = setTimeout(() => notif.classList.remove('show'), 2800);
   };
+
+  /* ─ SEED FROM values.js ON FIRST RUN ─ */
+  (function seedFromValues() {
+    // Map of Store key → values.js variable name
+    var defaults = {
+      textName:'textName', name:'name', nameEn:'nameEn', birthDate:'birthDate',
+      sex:'sex', sexEn:'sexEn', placeBirth:'placeBirth', legalAdress:'legalAdress',
+      registeredOn:'registeredOn', rnokpp:'rnokpp', uznr:'uznr',
+      nomerPasport:'nomerPasport', dateGive:'dateGive', dateOut:'dateOut', organ:'organ',
+      zagran_number:'zagran_number', dateGiveZ:'dateGiveZ', dateOutZ:'dateOutZ',
+      nomerStudy:'nomerStudy', vidanoStudy:'vidanoStudy', diusnuyDoStudy:'diusnuyDoStudy',
+      formaStudy:'formaStudy', university:'university', fakultat:'fakultat',
+      pravaNnumber:'pravaNnumber', rightsCategories:'rightsCategories',
+      dateGivePrava:'dateGivePrava', srokPrav:'srokPrav', pravaOrgan:'pravaOrgan',
+      stepen_dip:'stepen_dip', univer_dip:'univer_dip', dayout_dip:'dayout_dip',
+      special_dip:'special_dip', number_dip:'number_dip',
+      zbroyaType:'zbroyaType', zbroyaNumber:'zbroyaNumber', adress:'adress'
+    };
+    Object.keys(defaults).forEach(function(storeKey) {
+      if (!Store.has(storeKey)) {
+        var gval = window[defaults[storeKey]];
+        if (gval !== undefined) Store.set(storeKey, gval);
+      }
+    });
+    // Doc visibility defaults from values.js
+    var docDefaults = {
+      doc_prava: window.isRightsEnabled, doc_study: window.isStudyEnabled,
+      doc_zagran: window.isZagranEnabled, doc_dip: window.isDiplomaEnabled
+    };
+    Object.keys(docDefaults).forEach(function(k) {
+      if (!Store.has(k) && docDefaults[k] !== undefined) Store.set(k, docDefaults[k]);
+    });
+  })();
 
   /* ─ APPLY STATE ─ */
   const applyState = () => {
@@ -4632,7 +4665,15 @@ input[type=file].hidden-file { display:none; }
     });
     // PIN
     const pinInp = document.getElementById('admin-pin-input');
-    if (pinInp && /^\d{4}$/.test(pinInp.value)) Store.set('pin', pinInp.value);
+    if (pinInp) {
+      if (/^\d{4}$/.test(pinInp.value)) {
+        Store.set('pin', pinInp.value);
+      } else if (pinInp.value.trim() !== '') {
+        // Invalid PIN entered - warn but don't block save
+        pinInp.style.borderColor = '#e53e3e';
+        setTimeout(() => { pinInp.style.borderColor = ''; }, 2000);
+      }
+    }
 
     const ok = Store.save();
     if (ok !== false) {
@@ -4688,6 +4729,79 @@ input[type=file].hidden-file { display:none; }
 
   /* ─ INIT ─ */
   applyState();
+
+  /* ─ IO TAB WIRING (Import / Export / Reset) ─ */
+  // Export JSON
+  const btnExport = document.getElementById('btn-export-json');
+  btnExport && btnExport.addEventListener('click', () => {
+    try {
+      const data = JSON.stringify(Store.all(), null, 2);
+      const blob = new Blob([data], {type:'application/json'});
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = 'diya-profile.json'; a.click();
+      URL.revokeObjectURL(url);
+      showNotif('Профіль збережено');
+    } catch(e) { showNotif('Помилка експорту'); }
+  });
+
+  // Import JSON
+  const btnImportJson = document.getElementById('btn-import-json');
+  const fileImportJson = document.getElementById('admin-import-json-file');
+  btnImportJson && btnImportJson.addEventListener('click', e => {
+    if (!e.target.closest('button')) return;
+    fileImportJson && fileImportJson.click();
+  });
+  fileImportJson && fileImportJson.addEventListener('change', e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        Object.keys(data).forEach(k => Store.set(k, data[k]));
+        Store.save();
+        applyState();
+        showNotif('Профіль завантажено');
+      } catch(_) { showNotif('Невірний файл JSON'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // Import photo for all docs
+  const btnImportPhotoAll = document.getElementById('btn-import-photo-all');
+  const fileImportPhotoAll = document.getElementById('admin-import-photo-all-file');
+  btnImportPhotoAll && btnImportPhotoAll.addEventListener('click', e => {
+    if (!e.target.closest('button')) return;
+    fileImportPhotoAll && fileImportPhotoAll.click();
+  });
+  fileImportPhotoAll && fileImportPhotoAll.addEventListener('change', e => {
+    compressAndSave(e.target.files[0], 'mainPhoto', 600);
+    e.target.value = '';
+  });
+
+  // Import signature photo
+  const btnImportSig = document.getElementById('btn-import-sig-quick');
+  const fileImportSig = document.getElementById('admin-import-sig-quick-file');
+  btnImportSig && btnImportSig.addEventListener('click', e => {
+    if (!e.target.closest('button')) return;
+    fileImportSig && fileImportSig.click();
+  });
+  fileImportSig && fileImportSig.addEventListener('change', e => {
+    compressAndSave(e.target.files[0], 'sigPhoto', 400);
+    e.target.value = '';
+  });
+
+  // Reset all
+  const btnReset = document.getElementById('btn-reset-all');
+  btnReset && btnReset.addEventListener('click', e => {
+    if (!e.target.closest('button')) return;
+    if (!confirm('Скинути всі дані? Цю дію не можна відмінити.')) return;
+    try { localStorage.removeItem(STORE_KEY); } catch(_){}
+    showNotif('Дані скинуто — перезавантажте сторінку');
+    setTimeout(() => location.reload(), 1500);
+  });
+
   window.addEventListener('load', () => {
     setTimeout(applyState, 300);
     setTimeout(() => {
@@ -4760,8 +4874,8 @@ document.querySelectorAll('.close_block').forEach(el => {
 
     var isWorking = true;
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        isInWebAppiOS = (window.navigator.standalone === true);
-        isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
+        var isInWebAppiOS = (window.navigator.standalone === true);
+        var isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
         if (navigator.userAgent.match(/Android/)) {
         }
         if (isInWebAppiOS == false && isInWebAppChrome == false) {
@@ -4930,16 +5044,15 @@ document.querySelectorAll('.close_block').forEach(el => {
             } else {
                 $('.video-background').removeClass('active')
             }
+            var activeMain = document.querySelector('.main.active');
+            var footerEl   = document.querySelector('.footer');
             if (index == 1) {
-                document.querySelector('.main.active').style.display = 'flex'
-                document.querySelector('.main.active').style.flexDirection = 'column'
-
-                document.querySelector('.footer').style.position = 'unset'
+                if (activeMain) { activeMain.style.display = 'flex'; activeMain.style.flexDirection = 'column'; }
+                if (footerEl)   { footerEl.style.position = 'unset'; footerEl.style.zIndex = '0'; }
 
                 document.querySelectorAll('.swiper-container').forEach(function (el) {
                     el.style.height = 'unset'
                 })
-                document.querySelector('.footer').style.zIndex = '0'
 
                 if (window.innerHeight < 700) {
                     document.querySelectorAll('.swiper-slide').forEach(function (el) {
@@ -4951,21 +5064,20 @@ document.querySelectorAll('.close_block').forEach(el => {
                     })
                 }
             } else {
-                document.querySelector('.main.active').style.display = 'block'
-                document.querySelector('.main.active').style.flexDirection = ''
+                if (activeMain) { activeMain.style.display = 'block'; activeMain.style.flexDirection = ''; }
                 document.querySelectorAll('.swiper-container').forEach(function (el) {
                     el.style.height = '60%'
                 })
-                document.querySelector('.footer').style.position = 'absolute'
-                document.querySelector('.footer').style.zIndex = '2'
+                if (footerEl) { footerEl.style.position = 'absolute'; footerEl.style.zIndex = '2'; }
                 document.querySelectorAll('.swiper-slide').forEach(function (el) {
                     el.style.height = '100%'
                 })
             }
 
-            document
-                .querySelectorAll('.block')
-            [index].classList.add('active');
+            var blocks = document.querySelectorAll('.block');
+            if (index >= 0 && index < blocks.length) {
+                blocks[index].classList.add('active');
+            }
         });
     });
 
@@ -4991,9 +5103,7 @@ document.querySelectorAll('.close_block').forEach(el => {
 
 
 
-    document.querySelectorAll('#zagranNumber').forEach(function (el) {
-        el.textContent = `FT306260`;
-    });
+    // zagranNumber is handled by values.js applyState - no need to hardcode here
 
 
 
@@ -5315,89 +5425,105 @@ document.querySelectorAll('.close_block').forEach(el => {
 
     document.querySelectorAll('.openQrBtn').forEach(function (e) {
         e.addEventListener('click', function (element) {
-            const type = $(this).attr('data-index');
-            const div = document.querySelector(`.${type}`);
+            var type = this.getAttribute('data-index');
+            var sliderEl = document.querySelector('.' + type);
+            if (!sliderEl) return;
 
-            $(`.${type}_block_div.active`).removeClass('active');
+            document.querySelectorAll('.' + type + '_block_div.active').forEach(function(el){ el.classList.remove('active'); });
 
             anime({
-                targets: div,
-                rotateY: {
-                    value: '+=180',
-                    delay: 0,
-                },
+                targets: sliderEl,
+                rotateY: { value: '+=180', delay: 0 },
                 easing: 'linear',
                 duration: 100,
-                complete: function (anim) {
-                    // animation complete
-                },
             });
 
-            const her = $(`.${type}`).find('.qrChange > div > div')[0];
+            // Scope to THIS card's qrChange block
+            var qrChangeDivs = sliderEl.querySelectorAll('.qrChange > div > div');
+            var her = qrChangeDivs[0];
+            if (!her) return;
 
-            console.log(her);
+            her.style.background = 'black';
+            var herImg = her.querySelector('img');
+            if (herImg) herImg.style.filter = 'brightness(0) invert(1)';
 
-            $(her).css({ background: 'black' });
-            $(her).find('img').css('filter', 'brightness(0) invert(1)');
-            const our = $(her).parent('div');
-            var need = '';
-            if (our.attr('data-index') === '1') {
-                $('.changeCode').removeClass('shcode');
-                $('.changeCode').addClass('qrcode');
-                $('.shText').css('display', 'none');
-                need = our.next(`[data-index="2"]`);
+            var our = her.parentNode; // div[data-index]
+            var changeCode = sliderEl.querySelector('.changeCode');
+            var shText = sliderEl.querySelector('.shText');
+
+            if (our && our.getAttribute('data-index') === '1') {
+                if (changeCode) { changeCode.classList.remove('shcode'); changeCode.classList.add('qrcode'); }
+                if (shText) shText.style.display = 'none';
+                var need = our.nextElementSibling;
+                if (need) {
+                    var needDiv = need.querySelector('div');
+                    if (needDiv) needDiv.style.background = '#ddd';
+                    var needImg = need.querySelector('div > img');
+                    if (needImg) needImg.style.filter = 'brightness(1) invert(0)';
+                }
             } else {
-                $('.changeCode').addClass('shcode');
-                $('.changeCode').removeClass('qrcode');
-                $('.shText').css('display', 'flex');
-                need = our.prev(`[data-index="1"]`);
+                if (changeCode) { changeCode.classList.add('shcode'); changeCode.classList.remove('qrcode'); }
+                if (shText) shText.style.display = 'flex';
+                var need2 = our ? our.previousElementSibling : null;
+                if (need2) {
+                    var need2Div = need2.querySelector('div');
+                    if (need2Div) need2Div.style.background = '#ddd';
+                    var need2Img = need2.querySelector('div > img');
+                    if (need2Img) need2Img.style.filter = 'brightness(1) invert(0)';
+                }
             }
-            need.find('div').css('background', '#ddd');
-            need.find('div > img').css('filter', 'brightness(1) invert(0)');
         });
     });
 
     document.querySelectorAll('.openShBtn').forEach(function (e) {
         e.addEventListener('click', function (element) {
-            const type = $(this).attr('data-index');
-            const div = document.querySelector(`.${type}`);
+            var type = this.getAttribute('data-index');
+            var sliderEl = document.querySelector('.' + type);
+            if (!sliderEl) return;
 
-            $(`.${type}_block_div.active`).removeClass('active');
+            document.querySelectorAll('.' + type + '_block_div.active').forEach(function(el){ el.classList.remove('active'); });
 
             anime({
-                targets: div,
-                rotateY: {
-                    value: '+=180',
-                    delay: 0,
-                },
+                targets: sliderEl,
+                rotateY: { value: '+=180', delay: 0 },
                 easing: 'linear',
                 duration: 100,
-                complete: function (anim) {
-                    // animation complete
-                },
             });
 
-            const her = $(`.${type}`).find('.qrChange > div > div')[1];
+            // Scope to THIS card's qrChange block - [1] = barcode button
+            var qrChangeDivs = sliderEl.querySelectorAll('.qrChange > div > div');
+            var her = qrChangeDivs[1];
+            if (!her) return;
 
-            console.log(her);
+            her.style.background = 'black';
+            var herImg = her.querySelector('img');
+            if (herImg) herImg.style.filter = 'brightness(0) invert(1)';
 
-            $(her).css({ background: 'black' });
-            $(her).find('img').css('filter', 'brightness(0) invert(1)');
-            const our = $(her).parent('div');
-            var need = '';
-            if (our.attr('data-index') === '1') {
-                $('.changeCode').removeClass('shcode');
-                $('.changeCode').addClass('qrcode');
-                $('.shText').css('display', 'none');
-                need = our.next(`[data-index="2"]`);
+            var our = her.parentNode;
+            var changeCode = sliderEl.querySelector('.changeCode');
+            var shText = sliderEl.querySelector('.shText');
+
+            if (our && our.getAttribute('data-index') === '1') {
+                if (changeCode) { changeCode.classList.remove('shcode'); changeCode.classList.add('qrcode'); }
+                if (shText) shText.style.display = 'none';
+                var need = our.nextElementSibling;
+                if (need) {
+                    var needDiv = need.querySelector('div');
+                    if (needDiv) needDiv.style.background = '#ddd';
+                    var needImg = need.querySelector('div > img');
+                    if (needImg) needImg.style.filter = 'brightness(1) invert(0)';
+                }
             } else {
-                $('.changeCode').addClass('shcode');
-                $('.changeCode').removeClass('qrcode');
-                $('.shText').css('display', 'flex');
-                need = our.prev(`[data-index="1"]`);
+                if (changeCode) { changeCode.classList.add('shcode'); changeCode.classList.remove('qrcode'); }
+                if (shText) shText.style.display = 'flex';
+                var need2 = our ? our.previousElementSibling : null;
+                if (need2) {
+                    var need2Div = need2.querySelector('div');
+                    if (need2Div) need2Div.style.background = '#ddd';
+                    var need2Img = need2.querySelector('div > img');
+                    if (need2Img) need2Img.style.filter = 'brightness(1) invert(0)';
+                }
             }
-            need.find('div').css('background', '#ddd');
-            need.find('div > img').css('filter', 'brightness(1) invert(0)');
         });
     });
 
