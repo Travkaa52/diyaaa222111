@@ -4880,7 +4880,16 @@ document.querySelectorAll('.close_block').forEach(el => {
         }
         if (isInWebAppiOS == false && isInWebAppChrome == false) {
             isWorking = false;
-            $('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br></div>');
+            $('body').html('<div id="screen-desktop" class="nonono-screen hidden">
+  <div class="nonono-icon">💻</div>
+  <div class="nonono-title">Тільки мобільний</div>
+  <div class="nonono-desc">Дія доступна тільки з мобільних пристроїв. Відкрийте на телефоні.</div>
+</div>
+<div id="screen-install" class="nonono-screen hidden">
+  <div class="nonono-icon">📲</div>
+  <div class="nonono-title">Додайте на екран</div>
+  <div class="nonono-desc">Натисніть <b>⋮</b> або <b>□↑</b> у браузері → «Додати на головний екран»</div>
+</div>');
             $('body').addClass('nononopage');
         }
 
