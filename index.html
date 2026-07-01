@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- PWA meta -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="viewport"
-          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-    <meta http-equiv="Cache-Control"
-          content="no-cache, no-store, must-revalidate" />
-    <meta name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent" />
-
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Дія" />
-    <link rel="icon"
-          type="image/png"
-          href="assets/favicon.png" />
+    <meta name="application-name" content="Дія" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="msapplication-TileColor" content="#c8dff0" />
+    <meta name="msapplication-tap-highlight" content="no" />
 
-    <link rel="apple-touch-icon-precomposed"
-          href="assets/favicon.png" />
-    <link rel="manifest" href="assets/manifest.json" />
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="access/192x192.png" />
+    <link rel="icon" type="image/png" sizes="48x48"   href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/x-icon"     href="assets/favicon.png" />
+    <link rel="apple-touch-icon" sizes="192x192"      href="access/192x192.png" />
+    <link rel="apple-touch-icon-precomposed"          href="access/192x192.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
     <title>Дія</title>
-
-    <link type="image/x-icon"
-          href="assets/favicon.png"
-          rel="shortcut icon" />
 
     <script src="assets/anime.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
@@ -41,6 +42,34 @@
     <script src="assets/jquery.marquee.min.js"
         type="text/javascript"></script>
 
+
+    <!-- Service Worker реєстрація -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(reg => {
+              console.log('[PWA] SW зареєстровано:', reg.scope);
+              // Автооновлення: якщо новий SW — перезавантажити сторінку
+              reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Новий контент доступний
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                });
+              });
+            })
+            .catch(err => console.warn('[PWA] SW помилка:', err));
+
+          // Автооновлення при активації нового SW
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!window._swReloading) { window._swReloading = true; window.location.reload(); }
+          });
+        });
+      }
+    </script>
 </head>
 
 <style>
@@ -740,6 +769,110 @@
         margin-top: 20px;
         height: 70px;
     }
+
+    /* ════════════════════════════════════════════════════
+       BUG FIXES — не чіпати
+       ════════════════════════════════════════════════════ */
+
+    /* BUG5 — Pagination dots: fix position after 3D transform */
+    .documentSlider .swiper-pagination {
+        position: absolute !important;
+        bottom: -28px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: auto !important;
+    }
+    .documentSlider .swiper-pagination-bullet {
+        transform: none !important;
+    }
+
+    /* BUG6 — Card flip: prevent stretch on first flip */
+    .swiper-slide {
+        display: flex !important;
+        align-items: flex-start !important;
+    }
+    .slider {
+        position: relative;
+        transform-style: preserve-3d;
+        width: 100%;
+        min-height: 200px;
+    }
+    .slider .content.front,
+    .slider .content.back {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        width: 100%;
+    }
+    .slider .content.back {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        transform: rotateY(180deg);
+    }
+    .slider.is-flipping .content.front,
+    .slider.is-flipping .content.back {
+        pointer-events: none;
+    }
+
+    /* BUG7 — QR/Barcode scan button layout fix */
+    .qrshBlock {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        min-height: 160px !important;
+    }
+    .qrshBlock .changeCode {
+        max-width: 160px !important;
+        max-height: 160px !important;
+        width: 160px !important;
+        height: 160px !important;
+        flex-shrink: 0 !important;
+    }
+    .qrshBlock .shText {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 4px;
+    }
+    /* QR switch buttons row */
+    .qrChange {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        margin-top: 12px !important;
+    }
+    .qrChange > div {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 4px !important;
+        cursor: pointer !important;
+    }
+    .qrChange > div > div {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #ddd;
+        transition: background 0.2s;
+    }
+    .qrChange > div > div img {
+        width: 20px !important;
+        height: 20px !important;
+        object-fit: contain !important;
+    }
+    .qrChange > div > span {
+        font-size: 11px !important;
+        color: #555 !important;
+    }
+
 </style>
 
 
@@ -2772,12 +2905,39 @@
                     height: 60%;
                 }
 
+                /* 3D-перспектива для карток документів */
+                .documentSlider {
+                    perspective: 1200px;
+                    transform-style: preserve-3d;
+                    overflow: visible !important;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .documentSlider .swiper-wrapper {
+                    transform-style: preserve-3d;
+                }
+
                 .swiper-slide {
                     display: flex;
                     justify-content: center;
-                    perspective: 1200px;
-                    transition-timing-function: var(--ios-ease);
-                    will-change: transform;
+                    transform-style: preserve-3d;
+                    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+                    will-change: transform, opacity;
+                    /* Аппаратне прискорення */
+                    -webkit-transform: translateZ(0);
+                    backface-visibility: hidden;
+                    -webkit-backface-visibility: hidden;
+                }
+
+                /* Плавний scroll для iOS */
+                .pre, .modal-content {
+                    -webkit-overflow-scrolling: touch;
+                    overscroll-behavior-y: contain;
+                }
+
+                /* Активна картка — чітка тінь */
+                .swiper-slide-active .slider {
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
                 }
 
 
@@ -5111,42 +5271,23 @@ function vhod(type, digit) {
             } else {
                 $('.video-background').removeClass('active')
             }
+            var mainEl   = document.querySelector('.main.active');
+            var footerEl = document.querySelector('.footer');
             if (index == 1) {
-                document.querySelector('.main.active').style.display = 'flex'
-                document.querySelector('.main.active').style.flexDirection = 'column'
-
-                document.querySelector('.footer').style.position = 'unset'
-
-                document.querySelectorAll('.swiper-container').forEach(function (el) {
-                    el.style.height = 'unset'
-                })
-                document.querySelector('.footer').style.zIndex = '0'
-
-                if (window.innerHeight < 700) {
-                    document.querySelectorAll('.swiper-slide').forEach(function (el) {
-                        el.style.height = '450px'
-                    })
-                } else {
-                    document.querySelectorAll('.swiper-slide').forEach(function (el) {
-                        el.style.height = '500px'
-                    })
-                }
+                if (mainEl) { mainEl.style.display = 'flex'; mainEl.style.flexDirection = 'column'; }
+                if (footerEl) { footerEl.style.position = 'unset'; footerEl.style.zIndex = '0'; }
+                document.querySelectorAll('.swiper-container').forEach(function (el) { el.style.height = 'unset'; });
+                var h = window.innerHeight < 700 ? '450px' : '500px';
+                document.querySelectorAll('.swiper-slide').forEach(function (el) { el.style.height = h; });
             } else {
-                document.querySelector('.main.active').style.display = 'block'
-                document.querySelector('.main.active').style.flexDirection = ''
-                document.querySelectorAll('.swiper-container').forEach(function (el) {
-                    el.style.height = '60%'
-                })
-                document.querySelector('.footer').style.position = 'absolute'
-                document.querySelector('.footer').style.zIndex = '2'
-                document.querySelectorAll('.swiper-slide').forEach(function (el) {
-                    el.style.height = '100%'
-                })
+                if (mainEl) { mainEl.style.display = 'block'; mainEl.style.flexDirection = ''; }
+                document.querySelectorAll('.swiper-container').forEach(function (el) { el.style.height = '60%'; });
+                if (footerEl) { footerEl.style.position = 'absolute'; footerEl.style.zIndex = '2'; }
+                document.querySelectorAll('.swiper-slide').forEach(function (el) { el.style.height = '100%'; });
             }
 
-            document
-                .querySelectorAll('.block')
-            [index].classList.add('active');
+            var blocks = document.querySelectorAll('.block');
+            if (index >= 0 && index < blocks.length) blocks[index].classList.add('active');
         });
     });
      
@@ -5364,7 +5505,6 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
     // ─────────────────────────────────────────────────────────────
     // АНІМАЦІЯ ПІН-КРАПОК — spring bounce при заповненні
     // ─────────────────────────────────────────────────────────────
-    const origVhod = window.vhod; // зберігаємо оригінал якщо є
     function animatePinDots() {
         const activeDots = document.querySelectorAll('.start-vhod > div.active');
         activeDots.forEach((dot) => {
@@ -5407,7 +5547,7 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
         });
     });
 
-    window.addEventListener('DOMContentLoaded', function () {
+    (function () {
 
         // Удаляем блоки, если документ неактивен
         var statusMapping = [
@@ -5425,48 +5565,126 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
         });
 
         // Swiper — документи
+        // ── ДОКУМЕНТИ: iOS-style картки зі snap + 3D ──────────────────────────
         if (document.querySelector('.documentSlider')) {
-    new Swiper('.documentSlider', {
-        slidesPerView: 1.12,
-        centeredSlides: true,
-        spaceBetween: 12,
-        speed: 450,
-        grabCursor: true,
-        resistanceRatio: 0.65,
-        touchReleaseOnEdges: true,
-        watchSlidesProgress: true,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        on: {
-            setTranslate(swiper) {
-                swiper.slides.forEach(slide => {
-                    const p = slide.progress;
-                    const scale = 1 - Math.min(Math.abs(p) * 0.08, 0.08);
-                    const y = Math.abs(p) * 12;
-                    slide.style.transform = `scale(${scale}) translateY(${y}px)`;
-                });
-            },
-            setTransition(swiper, duration) {
-                swiper.slides.forEach(slide => {
-                    slide.style.transitionDuration = duration + 'ms';
-                });
-            }
+            const docSwiper = new Swiper('.documentSlider', {
+                // Вигляд
+                slidesPerView:   1.08,
+                centeredSlides:  true,
+                spaceBetween:    14,
+
+                // iOS momentum-feel
+                speed:              420,
+                grabCursor:         true,
+                freeMode:           false,
+                resistanceRatio:    0.55,
+                touchReleaseOnEdges: true,
+                watchSlidesProgress: true,
+                longSwipesRatio:     0.15,
+                longSwipesMs:        100,
+                shortSwipes:         true,
+
+                // Фізика свайпу як в Дія
+                touchStartPreventDefault: false,
+                touchMoveStopPropagation: false,
+                touchAngle:              35,
+                threshold:               4,
+
+                // Пагінація
+                pagination: {
+                    el:             '.swiper-pagination',
+                    clickable:      true,
+                    dynamicBullets: true,
+                    dynamicMainBullets: 3,
+                },
+
+                // Keyboard
+                keyboard: { enabled: true, onlyInViewport: true },
+
+                // 3D-ефект: масштаб + підйом сусідніх карток
+                on: {
+                    setTranslate(swiper) {
+                        swiper.slides.forEach(slide => {
+                            if (!slide.classList.contains('swiper-slide')) return;
+                            const progress = slide.progress !== undefined ? slide.progress : 0;
+                            const absP     = Math.abs(progress);
+
+                            // Масштаб: активна 100%, сусідні ~93%
+                            const scale  = 1 - Math.min(absP * 0.07, 0.07);
+                            // Вертикальний зсув: підйом активної картки
+                            const translateY = absP * 14;
+                            // Яскравість: сусідні трохи темніші
+                            const opacity = 1 - Math.min(absP * 0.18, 0.3);
+                            // Z-depth
+                            const translateZ = -absP * 30;
+
+                            slide.style.transform  = `scale(${scale}) translateY(${translateY}px) translateZ(${translateZ}px)`;
+                            slide.style.opacity    = opacity;
+                            slide.style.zIndex     = Math.round(100 - absP * 10);
+                        });
+                    },
+                    setTransition(swiper, duration) {
+                        swiper.slides.forEach(slide => {
+                            slide.style.transitionDuration      = duration + 'ms';
+                            slide.style.transitionTimingFunction = 'cubic-bezier(0.32, 0.72, 0, 1)';
+                        });
+                    },
+                    slideChangeTransitionStart(swiper) {
+                        // Хаптіка при зміні картки (iOS / Android)
+                        if (navigator.vibrate) navigator.vibrate(8);
+                        if (window.webkit?.messageHandlers?.haptic) {
+                            window.webkit.messageHandlers.haptic.postMessage({ type: 'light' });
+                        }
+                    },
+                    slideChangeTransitionEnd(swiper) {
+                        // Скидаємо флип карток що не активні
+                        swiper.slides.forEach((slide, i) => {
+                            if (i !== swiper.activeIndex) {
+                                const sliderEl = slide.querySelector('.slider');
+                                if (sliderEl) {
+                                    const state = cardState.get(sliderEl);
+                                    if (state && state.flipped) {
+                                        gsap && gsap.set(sliderEl, { rotateY: 0 });
+                                        state.flipped = false;
+                                        if (cardTimers.has(sliderEl)) {
+                                            clearInterval(cardTimers.get(sliderEl).interval);
+                                            cardTimers.delete(sliderEl);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    },
+                },
+            });
+
+            // Зберігаємо інстанс глобально (для зовнішніх викликів)
+            window._docSwiper = docSwiper;
         }
-    });
 
-
-        // Swiper — новини
+        // ── НОВИНИ: м'який горизонтальний скролл ─────────────────────────────
         if (document.querySelector('.sliderNews')) {
             new Swiper('.sliderNews', {
-                pagination: { el: '.swiper-pagination2', clickable: true },
-                spaceBetween: 30,
+                slidesPerView:  1.05,
+                centeredSlides: true,
+                spaceBetween:   16,
+                speed:          380,
+                grabCursor:     true,
+                freeMode: {
+                    enabled:   true,
+                    momentum:  true,
+                    momentumRatio:    0.7,
+                    momentumBounce:   true,
+                    momentumVelocityRatio: 0.6,
+                },
+                pagination: {
+                    el:        '.swiper-pagination2',
+                    clickable: true,
+                },
             });
         }
     } // end if documentSlider
-    }); // end DOMContentLoaded
+    }()); // IIFE runs immediately
 
 
     function getCurrentDateTime() {
@@ -5501,101 +5719,44 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
         e.textContent = getCurrentDateTime();
     });
 
-    document.querySelectorAll('#openQr').forEach(function (e) {
-        e.addEventListener('click', function (element) {
-            const type = $(this).attr('data-index');
-            const div = document.querySelector(`.${type}`);
-
-            $(`.${type}_block_div.active`).removeClass('active');
-
-            anime({
-                targets: div,
-                rotateY: {
-                    value: '+=180',
-                    delay: 0,
-                },
-                easing: 'linear',
-                duration: 100,
-                complete: function (anim) {
-                    playing = false;
-                },
-            });
-
-            const her = $(`.${type}`).find('.qrChange > div > div')[0];
-
-            console.log(her);
-
-            $(her).css({ background: 'black' });
-            $(her).find('img').css('filter', 'brightness(0) invert(1)');
-            const our = $(her).parent('div');
-            var need = '';
-            if (our.attr('data-index') === '1') {
-                $(div).find('.changeCode').removeClass('shcode');
-                $('.changeCode').addClass('qrcode');
-                $('.shText').css('display', 'none');
-                need = our.next(`[data-index="2"]`);
-            } else {
-                $('.changeCode').addClass('shcode');
-                $('.changeCode').removeClass('qrcode');
-                $('.shText').css('display', 'flex');
-                need = our.prev(`[data-index="1"]`);
-            }
-            need.find('div').css('background', '#ddd');
-            need.find('div > img').css('filter', 'brightness(1) invert(0)');
-        });
+    // #openQr / #openSh — використовуємо flipCard + scoped qrChange
+    // (ці кнопки посилаються на картку через data-index="<class>")
+    function activateQrShBtn(type, btnIndex) {
+        var sliderEl = document.querySelector('.' + type);
+        if (!sliderEl) return;
+        document.querySelectorAll('.' + type + '_block_div.active').forEach(function(el){ el.classList.remove('active'); });
+        flipCard(sliderEl);
+        var qrChangeBlock = sliderEl.querySelector('.qrChange');
+        if (!qrChangeBlock) return;
+        var allBtns = qrChangeBlock.querySelectorAll('div[data-index] > div');
+        allBtns.forEach(function(b){ b.style.background = '#ddd'; var img = b.querySelector('img'); if(img) img.style.filter=''; });
+        var targetBtn = allBtns[btnIndex];
+        if (!targetBtn) return;
+        targetBtn.style.background = 'black';
+        var tImg = targetBtn.querySelector('img');
+        if (tImg) tImg.style.filter = 'brightness(0) invert(1)';
+        var changeCode = sliderEl.querySelector('.changeCode');
+        var shText = sliderEl.querySelector('.shText');
+        if (btnIndex === 0) {
+            if (changeCode) { changeCode.classList.remove('shcode'); changeCode.classList.add('qrcode'); }
+            if (shText) shText.style.display = 'none';
+        } else {
+            if (changeCode) { changeCode.classList.add('shcode'); changeCode.classList.remove('qrcode'); }
+            if (shText) shText.style.display = 'flex';
+        }
+    }
+    document.querySelectorAll('#openQr').forEach(function(e){
+        e.addEventListener('click', function(){ activateQrShBtn($(this).attr('data-index'), 0); });
     });
-
-    document.querySelectorAll('#openSh').forEach(function (e) {
-        e.addEventListener('click', function (element) {
-            const type = $(this).attr('data-index');
-            const div = document.querySelector(`.${type}`);
-
-            $(`.${type}_block_div.active`).removeClass('active');
-
-            anime({
-                targets: div,
-                rotateY: {
-                    value: '+=180',
-                    delay: 0,
-                },
-                easing: 'linear',
-                duration: 100,
-                complete: function (anim) {
-                    playing = false;
-                },
-            });
-
-            const her = $(`.${type}`).find('.qrChange > div > div')[1];
-
-            console.log(her);
-
-            $(her).css({ background: 'black' });
-            $(her).find('img').css('filter', 'brightness(0) invert(1)');
-            const our = $(her).parent('div');
-            var need = '';
-            if (our.attr('data-index') === '1') {
-                $('.changeCode').removeClass('shcode');
-                $('.changeCode').addClass('qrcode');
-                $('.shText').css('display', 'none');
-                need = our.next(`[data-index="2"]`);
-            } else {
-                $('.changeCode').addClass('shcode');
-                $('.changeCode').removeClass('qrcode');
-                $('.shText').css('display', 'flex');
-                need = our.prev(`[data-index="1"]`);
-            }
-            need.find('div').css('background', '#ddd');
-            need.find('div > img').css('filter', 'brightness(1) invert(0)');
-        });
+    document.querySelectorAll('#openSh').forEach(function(e){
+        e.addEventListener('click', function(){ activateQrShBtn($(this).attr('data-index'), 1); });
     });
 
 
 
 
 
-    setTimeout(function () {
-        $('.block2.active').removeClass('active');
-    }, 1000);
+    // BUG10 removed: block2 active removal setTimeout was killing tab state
 
     // $('.study').parent('div').remove();
 

@@ -1,202 +1,78 @@
-// ═══════════════════════════════════════════════════════════════════
-//  values.js — Конфігурація Дія-симулятора
-//  Встановіть EXPIRY_DATE щоб заблокувати доступ після вказаного часу
-// ═══════════════════════════════════════════════════════════════════
+// values.js
 
-// ─────────────────────────────────────────────────────────────────
-//  ⏰  БЛОКУВАННЯ ДОСТУПУ ЗА ДАТОЮ/ЧАСОМ
-//  Формат: 'YYYY-MM-DDTHH:MM:SS'  (час за локальним часовим поясом)
-//  Приклад: '2025-12-31T23:59:59'  — заблокується 31 грудня 2025 о 23:59:59
-//  Щоб вимкнути блокування — залиште рядок порожнім: ''
-// ─────────────────────────────────────────────────────────────────
-var EXPIRY_DATE = '';   // ← ВСТАВТЕ СЮДИ ДАТУ/ЧАС, наприклад: '2025-12-31T23:59:59'
+// Основные данные 
+var fio               = "Чумаченко Максим Констянтинович";
+var fio_en            = "Chumachenko Maksym Konstantinovich";
+var birth             = "20.06.2007"; //дата рождения
+var date_give         = "29.07.2025"; //Дата видачи
+var date_out          = "30.07.2035"; // действителен до
+var organ             = "0512"; //орган что выдал документ
+var rnokpp            = "3582200550"; //ИНН
+var uznr              = "19980128-07937"; //Номер записи
+var pass_number       = "008420840"; //номер паспорта
 
-// ─────────────────────────────────────────────────────────────────
-//  📝  ПЕРСОНАЛЬНІ ДАНІ
-// ─────────────────────────────────────────────────────────────────
+var registeredOn      = "20.09.1999"; //дата регистрации
 
-// Ім'я для вітання на головному екрані (Привіт, ...)
-var textName = 'Іван';
+// Прописка
+var legalAdress       = "Харківська область"; //Место проживание
+var live              = "Харківська область"; //Место рождение 
+var bank_adress       = "Харківська область,Куп`янський район с.Ккіндрашівка вул. Паберемна, буд. 12, кв. 5"; //Место жительства указано в банке
 
-// ПІБ українською
-var name = 'ІВАНЕНКО ІВАН ІВАНОВИЧ';
+var sex               = "Ч";
+var sex_en            = "M";
 
-// ПІБ англійською (для закордонного паспорта)
-var nameEn = 'IVANENKO IVAN IVANOVYCH';
+// Данные для Прав
+var rights_categories = "A, B"; //Категории
+var prava_number      = "AUX723027"; // номер прав
+var prava_date_give   = "01.04.2025"; //Дата выдачи Прав
+var prava_date_out    = "01.04.2035"; //Действителен ДО
+var pravaOrgan        = "0512"; //орган который выдал
 
-// Дата народження (ДД.ММ.РРРР)
-var birthDate = '01.01.1990';
 
-// Стать
-var sex    = 'Чоловіча';
-var sexEn  = 'Male';
 
-// Місце народження
-var placeBirth = 'М. КИЇВ';
+var university        = "ХНУ имени Каразина"; // Університет
+var fakultet          = "Физико-технический"; // Факультет
+var stepen_dip        = "Магістра";
+var univer_dip        = "ХНУ имени Каразина";
+var dayout_dip        = "01.07.2023";
+var special_dip       = "Прикладная математика";
+var number_dip        = "MT-545678";
+var form              = "Очная";
 
-// Місце проживання / прописка
-var legalAdress = 'М. КИЇВ, ВУЛ. ХРЕЩАТИК, БУД. 1, КВ. 1';
 
-// Дата реєстрації місця проживання
-var registeredOn = '01.01.2010';
+// заграник
+var zagran_number     = "FX862524"; //номер загран
+var dateGiveZ         = "18.11.2019"; //выдан загран
+var dateOutZ          = "18.11.2029"; //коньчаеться загран
 
-// ─────────────────────────────────────────────────────────────────
-//  🪪  ПАСПОРТ
-// ─────────────────────────────────────────────────────────────────
+var student_number    = "2022154258";
+var student_date_give = "01.09.2021";
+var student_date_out  = "30.06.2025";
 
-var rnokpp       = '1234567890';       // РНОКПП (ІПН)
-var uznr         = '19900101-00001';   // Запис № (УНЗР)
-var nomerPasport = '123456789';        // Номер паспорта (ID-картки)
-var dateGive     = '01.01.2020';       // Дата видачі
-var dateOut      = '01.01.2030';       // Дійсний до
-var organ        = '1234';             // Орган що видав
 
-// ─────────────────────────────────────────────────────────────────
-//  🌍  ЗАКОРДОННИЙ ПАСПОРТ
-// ─────────────────────────────────────────────────────────────────
 
-var zagran_number = 'FT000000';       // Номер закордонного паспорта
-var dateGiveZ     = '01.01.2020';     // Дата видачі
-var dateOutZ      = '01.01.2030';     // Дійсний до
+// Включение/выключение документов
+var isRightsEnabled   = true;
+var isZagranEnabled   = false;
+var isDiplomaEnabled  = false;
+var isStudyEnabled    = false;
+var isRojdenie        = false;
+// Добавь остальные переменные по аналогии
 
-// ─────────────────────────────────────────────────────────────────
-//  🎓  СТУДЕНТСЬКИЙ КВИТОК
-// ─────────────────────────────────────────────────────────────────
+// Пути к нужным фото    ?timestamp=N   "photo.jpg?timestamp=N" динамически: var url = "photo.jpg?timestamp=" + N;
 
-var nomerStudy     = '000001';
-var vidanoStudy    = '01.09.2020';
-var diusnuyDoStudy = '01.07.2025';
-var formaStudy     = 'Денна';
-var university     = 'КНУ ім. Тараса Шевченка';
-var fakultat       = 'Механіко-математичний факультет';
+var photo_passport = "1.png"; //эДок, паспорт,
+var photo_rights   = "1.png"; //права
+var photo_students = "1.png"; //диплом, студ
+var photo_zagran   = "1.png"; //загран
 
-// ─────────────────────────────────────────────────────────────────
-//  🚗  ПОСВІДЧЕННЯ ВОДІЯ
-// ─────────────────────────────────────────────────────────────────
+var signPng           = "sign.png"; //подпись
+// Можно добавить еще, если надо
 
-var pravaNnumber  = 'МЕС000000';
-var rightsCategories = 'A, B';        // Категорії водія
-var dateGivePrava = '01.01.2020';
-var srokPrav      = '01.01.2030';
-var pravaOrgan    = 'УЖКФ ХМВО';
 
-// ─────────────────────────────────────────────────────────────────
-//  📜  ДИПЛОМ
-// ─────────────────────────────────────────────────────────────────
 
-var stepen_dip  = 'Бакалавр';
-var univer_dip  = 'КНУ ім. Тараса Шевченка';
-var dayout_dip  = '01.07.2022';
-var special_dip = '121 Інженерія програмного забезпечення';
-var number_dip  = '00000001';
 
-// ─────────────────────────────────────────────────────────────────
-//  🔫  ДОЗВІЛ НА ЗБРОЮ
-// ─────────────────────────────────────────────────────────────────
 
-var zbroyaType   = 'Пістолет ПМ (9-мм пістолет Макарова)';
-var zbroyaNumber = 'ДЗ-000000';
 
-// ─────────────────────────────────────────────────────────────────
-//  🗂️  ЄДОКУМЕНТ
-// ─────────────────────────────────────────────────────────────────
 
-var adress = 'М. КИЇВ, ВУЛ. ХРЕЩАТИК, БУД. 1, КВ. 1';
 
-// ─────────────────────────────────────────────────────────────────
-//  👁️  ВИДИМІСТЬ ДОКУМЕНТІВ
-//  true  = документ відображається
-//  false = документ прихований
-// ─────────────────────────────────────────────────────────────────
-
-var isRightsEnabled  = true;   // Посвідчення водія
-var isStudyEnabled   = true;   // Студентський квиток
-var isZagranEnabled  = true;   // Закордонний паспорт
-var isDiplomaEnabled = true;   // Диплом
-
-// ═══════════════════════════════════════════════════════════════════
-//  🔒  СИСТЕМА БЛОКУВАННЯ — не змінюйте цей блок
-// ═══════════════════════════════════════════════════════════════════
-(function () {
-  'use strict';
-
-  // Якщо EXPIRY_DATE не вказано — нічого не робимо
-  if (!EXPIRY_DATE || typeof EXPIRY_DATE !== 'string' || EXPIRY_DATE.trim() === '') return;
-
-  var expiryMs;
-  try {
-    // Парсимо як локальний час (без "Z" в кінці)
-    expiryMs = new Date(EXPIRY_DATE.trim()).getTime();
-  } catch (e) {
-    console.warn('[values.js] Невірний формат EXPIRY_DATE:', EXPIRY_DATE);
-    return;
-  }
-
-  if (isNaN(expiryMs)) {
-    console.warn('[values.js] Невірний формат EXPIRY_DATE:', EXPIRY_DATE);
-    return;
-  }
-
-  function isExpired() {
-    return Date.now() >= expiryMs;
-  }
-
-  function showExpiredScreen() {
-    // Ховаємо весь вміст
-    document.documentElement.style.overflow = 'hidden';
-    var overlay = document.createElement('div');
-    overlay.id = 'expiry-screen';
-    overlay.style.cssText = [
-      'position:fixed', 'inset:0', 'z-index:2147483647',
-      'background:#fff', 'display:flex', 'flex-direction:column',
-      'align-items:center', 'justify-content:center',
-      'font-family:"e-Ukraine",sans-serif', 'text-align:center',
-      'padding:30px'
-    ].join(';');
-    overlay.innerHTML =
-      '<div style="font-size:54px;margin-bottom:20px">🔒</div>' +
-      '<h2 style="font-weight:300;font-size:22px;margin-bottom:12px">Доступ завершено</h2>' +
-      '<p style="color:#666;font-size:14px;max-width:280px;line-height:1.6">' +
-        'Термін дії цієї демо-версії закінчився.<br>' +
-        'Зверніться до автора для поновлення.' +
-      '</p>';
-    // Додаємо після того як DOM буде готовий
-    function mount() {
-      if (document.body) {
-        document.body.appendChild(overlay);
-        // Прибираємо всі інші елементи з видимості
-        Array.from(document.body.children).forEach(function (el) {
-          if (el.id !== 'expiry-screen') el.style.display = 'none';
-        });
-        // Очищаємо localStorage щоб не можна було обійти
-        try { localStorage.clear(); } catch (_) {}
-      } else {
-        requestAnimationFrame(mount);
-      }
-    }
-    mount();
-  }
-
-  // Перевіряємо одразу
-  if (isExpired()) {
-    // Якщо DOM вже готовий — показуємо, інакше чекаємо
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', showExpiredScreen);
-    } else {
-      showExpiredScreen();
-    }
-    return;
-  }
-
-  // Плануємо блокування рівно в момент EXPIRY_DATE
-  var msLeft = expiryMs - Date.now();
-  // setTimeout надійний до ~24.8 днів; для більших значень — перевіряємо щохвилини
-  if (msLeft <= 2147483647) {
-    setTimeout(showExpiredScreen, msLeft);
-  }
-  // Резервна щохвилинна перевірка
-  var guard = setInterval(function () {
-    if (isExpired()) { clearInterval(guard); showExpiredScreen(); }
-  }, 60000);
-
-})();
