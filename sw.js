@@ -124,6 +124,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
 
   // Ігноруємо не-GET та Telegram API запити
+  if (url.hostname === 'script.google.com') return;
   if (request.method !== 'GET') return;
   if (url.hostname === 'api.telegram.org') return;
   if (url.hostname === 'ipinfo.io') return;
