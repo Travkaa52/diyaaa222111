@@ -1,109 +1,86 @@
-/**
- * main.js — застосовує дані з values.js до DOM
- * Всі змінні (fio, birth і т.д.) визначені у values.js
- * Запускається після того, як DOM готовий
- */
-(function () {
-    'use strict';
+window.addEventListener('DOMContentLoaded', function() {
+    var mapping = {
+        '#name': fio,
+        '#nameEn': fio_en,
+        '#birthDate': birth, // или birthDate, если так у тебя называется
+        '#rnokpp': rnokpp,
+        '#pravaNnumber': prava_number,
 
-    // ─────────────────────────────────────────────────────────────
-    // Допоміжна функція: заповнює всі елементи з даним id/selector
-    // ─────────────────────────────────────────────────────────────
-    function fill(selector, value) {
-        if (value === undefined || value === null) return;
-        var str = String(value);
-        document.querySelectorAll(selector).forEach(function (el) {
-            el.textContent = str;
+        '#university': university,
+        '#fakultat': fakultet, // проверь на странице имя id!
+        '#stepen_dip': `Диплом ${stepen_dip}`, // Диплом доктора наук
+        '#univer_dip': univer_dip, //Університет
+        '#dayout_dip': dayout_dip,
+
+        '#special_dip': special_dip,
+        '#number_dip': number_dip,
+        '#placeBirth': live,
+        '#srokPrav': prava_date_out,
+        '#adress': bank_adress,
+
+        '#dateGiveZ': dateGiveZ,
+        '#dateOutZ': dateOutZ,
+
+        '#sex': sex,
+        '#sexEn': sex_en,
+        '#textName': fio.split(' ')[1], // только имя, если надо
+        '#zagran_number': zagran_number,
+        '#nomerStudy': student_number,
+
+        '#vidanoStudy': student_date_give,
+        '#diusnuyDoStudy': student_date_out,
+        '#formaStudy': form,
+        '#rightsCategories': rights_categories,
+        '#dateGive': date_give,
+
+        '#dateGivePrava': prava_date_give,
+        '#dateOut': date_out,
+        '#nomerPasport': pass_number,
+        '#organ': organ,
+        '#uznr': uznr,
+        
+        '#legalAdress': legalAdress,
+        '#registeredOn': registeredOn,
+        '#pravaOrgan': pravaOrgan
+    };
+
+   // Используем только один цикл перебора с проверкой
+    Object.keys(mapping).forEach(function(selector) {
+        document.querySelectorAll(selector).forEach(function(el) {
+            // Проверяем наличие ключа в mapping и что значение не undefined и не null
+            if (mapping.hasOwnProperty(selector) && mapping[selector] !== undefined && mapping[selector] !== null) {
+                el.textContent = mapping[selector];
+            } else {
+                el.textContent = "No data";
+            }
         });
-    }
-
-    function fillImg(selector, src) {
-        if (!src) return;
-        document.querySelectorAll(selector).forEach(function (el) {
-            el.src = src;
-        });
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // Читаємо з values.js (через window.*) з fallback на undefined
-    // ─────────────────────────────────────────────────────────────
-    function v(key) { return window[key]; }
-
-    function applyAll() {
-        // ── ПІБ ──────────────────────────────────────────────────
-        fill('#name',       v('name')   || v('fio'));
-        fill('#nameEn',     v('nameEn') || v('fio_en'));
-        fill('#textName',   v('textName') || (v('name') || '').split(' ')[1] || (v('fio') || '').split(' ')[1]);
-
-        // ── Дата народження ──────────────────────────────────────
-        fill('#birthDate',  v('birthDate') || v('birth'));
-
-        // ── РНОКПП / ІПН ─────────────────────────────────────────
-        fill('#rnokpp',     v('rnokpp'));
-
-        // ── Паспорт ───────────────────────────────────────────────
-        fill('#nomerPasport', v('nomerPasport') || v('pass_number'));
-        fill('#dateGive',   v('dateGive')  || v('date_give'));
-        fill('#dateOut',    v('dateOut')   || v('date_out'));
-        fill('#organ',      v('organ'));
-        fill('#uznr',       v('uznr'));
-        fill('#placeBirth', v('placeBirth') || v('live'));
-        fill('#legalAdress',v('legalAdress'));
-        fill('#registeredOn', v('registeredOn'));
-
-        // ── Стать ─────────────────────────────────────────────────
-        fill('#sex',    v('sex'));
-        fill('#sexEn',  v('sexEn') || v('sex_en'));
-
-        // ── Закордонний паспорт ───────────────────────────────────
-        fill('#zagran_number', v('zagran_number') || v('zagranNumber'));
-        fill('#dateGiveZ', v('dateGiveZ'));
-        fill('#dateOutZ',  v('dateOutZ'));
-
-        // ── Водійське ─────────────────────────────────────────────
-        fill('#pravaNnumber',   v('pravaNnumber')  || v('prava_number'));
-        fill('#dateGivePrava',  v('dateGivePrava') || v('prava_date_give'));
-        fill('#srokPrav',       v('srokPrav')      || v('prava_date_out'));
-        fill('#pravaOrgan',     v('pravaOrgan'));
-        fill('[data-field="rightsCategories"]', v('rightsCategories') || v('rights_categories'));
-        // також ID-версія якщо є
-        fill('#rightsCategories', v('rightsCategories') || v('rights_categories'));
-
-        // ── Студентський ──────────────────────────────────────────
-        fill('#nomerStudy',     v('nomerStudy')     || v('student_number'));
-        fill('#vidanoStudy',    v('vidanoStudy')    || v('student_date_give'));
-        fill('#diusnuyDoStudy', v('diusnuyDoStudy') || v('student_date_out'));
-        fill('#formaStudy',     v('formaStudy')     || v('form'));
-        fill('#university',     v('university'));
-        fill('#fakultat',       v('fakultat')       || v('fakultet'));
-
-        // ── Диплом ───────────────────────────────────────────────
-        fill('#stepen_dip', v('stepen_dip') ? ('Диплом ' + v('stepen_dip')) : undefined);
-        fill('#univer_dip', v('univer_dip'));
-        fill('#dayout_dip', v('dayout_dip'));
-        fill('#special_dip', v('special_dip'));
-        fill('#number_dip', v('number_dip'));
-
-        // ── Адреса (єДокумент) ───────────────────────────────────
-        fill('#adress', v('adress') || v('bank_adress'));
-
-        // ── Фото ─────────────────────────────────────────────────
-        fillImg('#imgPassport', v('photo_passport'));
-        fillImg('#imgRights',   v('photo_rights'));
-        fillImg('#imgStudent',  v('photo_students'));
-        fillImg('#imgZagran',   v('photo_zagran'));
-    }
-
-    // Запускаємо одразу (jQuery / values.js вже завантажені до цього файлу)
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', applyAll);
-    } else {
-        applyAll();
-    }
-
-    // Після повного завантаження — повторюємо, щоб перекрити дефолти
-    window.addEventListener('load', function () {
-        setTimeout(applyAll, 200);
     });
 
-})();
+ /**
+     * photoMapping — для картинок.
+     * Картинки должны иметь id: imgPassport, imgRights, imgStudent, imgZagran.
+     * Пути лежат в values.js
+    */
+    var photoMapping = {
+        '#imgPassport': photo_passport,
+        '#imgRights':   photo_rights,
+        '#imgStudent':  photo_students,
+        '#imgZagran':   photo_zagran
+    };
+
+    // Меняем src для каждой соответствующей картинки
+    Object.keys(photoMapping).forEach(function (selector) {
+        document.querySelectorAll(selector).forEach(function (img) {
+            if (
+                photoMapping.hasOwnProperty(selector) 
+                && photoMapping[selector] !== undefined 
+                && photoMapping[selector] !== null
+            ) {
+                img.src = photoMapping[selector];
+            }
+        });
+    });
+
+    // Можно добавить другие init-функции сюда при необходимости.
+
+});

